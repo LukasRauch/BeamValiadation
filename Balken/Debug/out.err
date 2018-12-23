@@ -1,0 +1,9 @@
+15:29:45 Warning in Dof::activate_BCDirichlet:
+15:29:45 DOF has already an activated Dirichlet BC.
+15:29:45 Old Dirichlet BC will be overwritten.
+15:29:45 Warning in Dof::activate_BCDirichlet:
+15:29:45 DOF has already an activated Dirichlet BC.
+15:29:45 Old Dirichlet BC will be overwritten.
+15:29:45 Warning in Dof::activate_BCDirichlet:
+15:29:45 DOF has already an activated Dirichlet BC.
+15:29:45 Old Dirichlet BC will be overwritten.

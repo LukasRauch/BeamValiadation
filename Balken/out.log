@@ -1,0 +1,653 @@
+17:03:44  
+17:03:44  
+17:03:44    ***********************************************
+17:03:44    *                 ===========                 *
+17:03:44    *                  CARAT 2.0                  *
+17:03:44    *                 ===========                 *
+17:03:44    *                                             *
+17:03:44    *                 SERIAL CODE!                *
+17:03:44    *                                             *
+17:03:44    *                Version 0.1.0                *
+17:03:44    *                                             *
+17:03:44    *  Computer Aided Research and Analysis Tool  *
+17:03:44    *          (object-oriented version)          *
+17:03:44    *        Chair of Structural Analysis,        *
+17:03:44    *   Prof. Dr. K.-U. Bletzinger, TU Muenchen   *
+17:03:44    ***********************************************
+17:03:44  
+17:03:44  
+17:03:44 Used logging system: RLOG
+17:03:44 
+17:03:44 This is a DEBUG version of Carat
+17:03:44 
+17:03:44 --------------------------------------
+17:03:44  ... starting Preprocessing
+17:03:44 --------------------------------------
+17:03:44  
+17:03:44 Reading input file: C:/_Masterarbeit/beispiele/Balken/Kragarm.carat
+17:03:44  
+17:03:44 Input file path detected: C:/_Masterarbeit/beispiele/Balken
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:257) Reading of global data finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:280) Reading of Level-Set finished
+17:03:44 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:03:44 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:03:44 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:03:44 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:03:44 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:695) set_Nurbs_Patch: NURBS curve has been successfully parsed
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:353) Reading of NURBS/BSPLINE/TSPLINE/TRIMMING topology finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:363) Reading of coordinate systems finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:407) Reading of materials, properties, stacks and flattening strategy finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:418) Reading of parts finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:429) Reading of Load Curves finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:438) DesignControl object created
+17:03:44 Reading of design nodes finished
+17:03:44 Reading of design evaluation points finished
+17:03:44 Reading of design elements finished
+17:03:44 Reading of design boundaries finished
+17:03:44 Reading of design optimization refinement finished
+17:03:44 Reading of design elements finished
+17:03:44 Reading of design joints finished
+17:03:44 Reading of design supports finished
+17:03:44 Reading of design loads finished
+17:03:44 Reading of design interfaces finished
+17:03:44 load design finished
+17:03:44 Starting to mesh design elements!
+17:03:44 
+17:03:44 Finish meshing design elements!
+17:03:44 
+17:03:44 Starting to create the elements from DE elements!
+17:03:44 
+17:03:44 Creating elements from DE elements done!
+17:03:44 
+17:03:44 Starting to create elements from DE boundary elements!
+17:03:44 
+17:03:44 Creating elements from DE boundary elements done!
+17:03:44 
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:443) Reading of design finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:454) Reading of nodes finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:464) Reading of control point parametre sets finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:476) Reading of chambers finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:492) Reading of Extraction operator and Bezier elements finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:503) Reading of elements and element sets finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:521) Reading of Dirichlet bc's finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:532) Reading of Neumann bc's finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:543) Reading of computation cases finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:561) Reading of Interfaces and Surfaces finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:580) Reading of contact properties and contact pairs finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:626) Reading of Actuators finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:635) Reading of Sensors finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:644) Reading of Controller finished
+17:03:44 (..\..\src\module_femkernel\InputControl.cpp:654) Reading of Mesh Regularization finished
+17:03:45 (..\..\src\module_femkernel\InputControl.cpp:713) Reading of analysis block finished
+17:03:45 (..\..\src\module_femkernel\InputControl.cpp:835) Reading of problem block finished
+17:03:45 (..\..\src\module_femkernel\InputControl.cpp:850) Dummyrun for parameters finished
+17:03:45 (..\..\src\module_femkernel\InputControl.cpp:873) InputControl::load_Problem() finished
+17:03:45 complete preprocessing done in 0.272000 seconds.
+17:03:45  
+17:03:45 --------------------------------------
+17:03:45  ... starting Solution of problem 1:
+17:03:45 --------------------------------------
+17:03:45  
+17:03:45 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:448) get Data
+17:03:45 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:454) write state
+17:03:45 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:460) prepare Domain
+17:03:45 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:650) Number of elements before contact search in AnaStaGeoNonLin: 1
+17:03:45 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:657) Number of elements after contact search  in AnaStaGeoNonLin: 1
+17:03:45 Bandwidth reduction started!
+17:03:45 (..\..\src\module_femkernel\SolverBasis_open.cpp:345) part one takes 0.000000 seconds!
+17:03:45 Original bandwith  : 3 
+17:03:45 Original profile   : 14 
+17:03:45 Using 'CUTHILL_MCKEE' algorithm
+17:03:45 Original ordering better than new one!
+17:03:45 Bandwith reduction finished in 0.006000 seconds!
+17:03:45  
+17:03:45 (..\..\src\module_femkernel\SolverBasis_open.cpp:494)  
+17:03:45 GlobalSparseMatrix: starting dry run
+17:03:45 GlobalSparseMatrix: dry run done in 0.001000 seconds.
+17:03:45  
+17:03:45 creation of equation system in 0.000000 seconds.
+17:03:45  
+17:03:45  
+17:03:45  
+17:03:45 Start of time step procedure. Control data.
+17:03:45 -----------------------------------------------------------------------------------
+17:03:45 Control Type                :  FORCE_CONTROL
+17:03:45 Time Steps                  :  10
+17:03:45 Traced Node                 :  0
+17:03:45 Traced Global Dof Type      :  NONE
+17:03:45 Equilibrium Accuracy        :  1.000000e-03
+17:03:45 Max Iter Equilibrium        :  100
+17:03:45 Max. Number of Restarts     :  0
+17:03:45 Step Length Control Algo    :  FIXED
+17:03:45 Suppl. Eigenvalue Analysis  :  NO
+17:03:45 Use Imperfect Design        :  NO
+17:03:45 -----------------------------------------------------------------------------------
+17:03:45  
+17:03:45  
+17:03:45 Time Step No. 1
+17:03:45 -----------------------------------------------------------------------------------
+17:03:45 Control Type             :  FORCE_CONTROL
+17:03:45 Traced Node              :  0
+17:03:45 Traced Global Dof Type   :  NONE
+17:03:45 Load Factor              :  1.000000e-01
+17:03:45 Equilibrium Accuracy     :  1.000000e-03
+17:03:45 Max Iter Equilibrium     :  100
+17:03:45 Number of Restarts       :  0
+17:03:45 -----------------------------------------------------------------------------------
+17:03:45   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:45 -----------------------------------------------------------------------------------
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:45 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:45     1   |    0.000000e+00  |    2.843619e-01  |    2.661986e-01  |    1.000000e+01
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:46     2   |    0.000000e+00  |    2.758882e-01  |    9.835203e-03  |    2.348703e+03
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:46     3   |    0.000000e+00  |    2.747913e-01  |    1.178085e-03  |    2.237653e+00
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:46     4   |    0.000000e+00  |    2.748264e-01  |    3.833375e-05  |    5.405440e-02
+17:03:46 Iteration successful. --------------------------------------------------------------
+17:03:46 Norm of predictor: 0.255987
+17:03:46  
+17:03:46  
+17:03:46 Time Step No. 2
+17:03:46 -----------------------------------------------------------------------------------
+17:03:46 Control Type             :  FORCE_CONTROL
+17:03:46 Traced Node              :  0
+17:03:46 Traced Global Dof Type   :  NONE
+17:03:46 Load Factor              :  2.000000e-01
+17:03:46 Equilibrium Accuracy     :  1.000000e-03
+17:03:46 Max Iter Equilibrium     :  100
+17:03:46 Number of Restarts       :  0
+17:03:46 -----------------------------------------------------------------------------------
+17:03:46   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:46 -----------------------------------------------------------------------------------
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:46 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:46     1   |    0.000000e+00  |    5.123549e-01  |    2.465271e-01  |    9.999926e+00
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:47     2   |    0.000000e+00  |    4.844771e-01  |    2.906177e-02  |    2.092054e+03
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:47     3   |    0.000000e+00  |    4.841544e-01  |    3.378090e-04  |    1.544707e+01
+17:03:47 Iteration successful. --------------------------------------------------------------
+17:03:47 Norm of predictor: 0.217816
+17:03:47  
+17:03:47  
+17:03:47 Time Step No. 3
+17:03:47 -----------------------------------------------------------------------------------
+17:03:47 Control Type             :  FORCE_CONTROL
+17:03:47 Traced Node              :  0
+17:03:47 Traced Global Dof Type   :  NONE
+17:03:47 Load Factor              :  3.000000e-01
+17:03:47 Equilibrium Accuracy     :  1.000000e-03
+17:03:47 Max Iter Equilibrium     :  100
+17:03:47 Number of Restarts       :  0
+17:03:47 -----------------------------------------------------------------------------------
+17:03:47   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:47 -----------------------------------------------------------------------------------
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:47 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:47     1   |    0.000000e+00  |    4.443448e-01  |    2.151372e-01  |    9.996850e+00
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:48     2   |    0.000000e+00  |    4.139952e-01  |    3.223568e-02  |    1.732669e+03
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:48     3   |    0.000000e+00  |    4.173794e-01  |    3.491396e-03  |    1.719058e+01
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:48     4   |    0.000000e+00  |    4.170711e-01  |    3.395845e-04  |    5.365607e-01
+17:03:48 Iteration successful. --------------------------------------------------------------
+17:03:48 Norm of predictor: 0.187212
+17:03:48  
+17:03:48  
+17:03:48 Time Step No. 4
+17:03:48 -----------------------------------------------------------------------------------
+17:03:48 Control Type             :  FORCE_CONTROL
+17:03:48 Traced Node              :  0
+17:03:48 Traced Global Dof Type   :  NONE
+17:03:48 Load Factor              :  4.000000e-01
+17:03:48 Equilibrium Accuracy     :  1.000000e-03
+17:03:48 Max Iter Equilibrium     :  100
+17:03:48 Number of Restarts       :  0
+17:03:48 -----------------------------------------------------------------------------------
+17:03:48   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:48 -----------------------------------------------------------------------------------
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:48 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:48     1   |    0.000000e+00  |    3.937306e-01  |    1.936208e-01  |    1.000601e+01
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:49     2   |    0.000000e+00  |    3.680936e-01  |    2.817016e-02  |    1.535560e+03
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:49     3   |    0.000000e+00  |    3.742011e-01  |    6.349994e-03  |    1.143399e+01
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:49 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:49     4   |    0.000000e+00  |    3.737878e-01  |    5.269148e-04  |    2.028634e+00
+17:03:49 Iteration successful. --------------------------------------------------------------
+17:03:49 Norm of predictor: 0.173048
+17:03:49  
+17:03:49  
+17:03:49 Time Step No. 5
+17:03:49 -----------------------------------------------------------------------------------
+17:03:49 Control Type             :  FORCE_CONTROL
+17:03:49 Traced Node              :  0
+17:03:49 Traced Global Dof Type   :  NONE
+17:03:49 Load Factor              :  5.000000e-01
+17:03:49 Equilibrium Accuracy     :  1.000000e-03
+17:03:49 Max Iter Equilibrium     :  100
+17:03:49 Number of Restarts       :  0
+17:03:49 -----------------------------------------------------------------------------------
+17:03:49   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:49 -----------------------------------------------------------------------------------
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:50     1   |    0.000000e+00  |    3.690635e-01  |    1.822533e-01  |    1.002178e+01
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:50     2   |    0.000000e+00  |    3.491825e-01  |    2.279539e-02  |    1.465755e+03
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:50     3   |    0.000000e+00  |    3.567645e-01  |    7.912501e-03  |    6.627152e+00
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:50 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:50     4   |    0.000000e+00  |    3.564768e-01  |    5.079532e-04  |    3.370745e+00
+17:03:50 Iteration successful. --------------------------------------------------------------
+17:03:50 Norm of predictor: 0.169168
+17:03:50  
+17:03:50  
+17:03:50 Time Step No. 6
+17:03:50 -----------------------------------------------------------------------------------
+17:03:50 Control Type             :  FORCE_CONTROL
+17:03:50 Traced Node              :  0
+17:03:50 Traced Global Dof Type   :  NONE
+17:03:50 Load Factor              :  6.000000e-01
+17:03:50 Equilibrium Accuracy     :  1.000000e-03
+17:03:50 Max Iter Equilibrium     :  100
+17:03:50 Number of Restarts       :  0
+17:03:50 -----------------------------------------------------------------------------------
+17:03:51   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:51 -----------------------------------------------------------------------------------
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:51     1   |    0.000000e+00  |    3.605112e-01  |    1.772693e-01  |    1.003708e+01
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:51     2   |    0.000000e+00  |    3.452551e-01  |    1.821424e-02  |    1.461377e+03
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:51     3   |    0.000000e+00  |    3.532791e-01  |    8.378532e-03  |    4.015330e+00
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:51 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:52     4   |    0.000000e+00  |    3.531267e-01  |    4.327169e-04  |    3.861308e+00
+17:03:52 Iteration successful. --------------------------------------------------------------
+17:03:52 Norm of predictor: 0.169530
+17:03:52  
+17:03:52  
+17:03:52 Time Step No. 7
+17:03:52 -----------------------------------------------------------------------------------
+17:03:52 Control Type             :  FORCE_CONTROL
+17:03:52 Traced Node              :  0
+17:03:52 Traced Global Dof Type   :  NONE
+17:03:52 Load Factor              :  7.000000e-01
+17:03:52 Equilibrium Accuracy     :  1.000000e-03
+17:03:52 Max Iter Equilibrium     :  100
+17:03:52 Number of Restarts       :  0
+17:03:52 -----------------------------------------------------------------------------------
+17:03:52   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:52 -----------------------------------------------------------------------------------
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:52     1   |    0.000000e+00  |    3.591910e-01  |    1.755412e-01  |    1.004247e+01
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:52     2   |    0.000000e+00  |    3.468657e-01  |    1.503882e-02  |    1.480969e+03
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:52 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:52     3   |    0.000000e+00  |    3.545683e-01  |    8.038481e-03  |    2.781685e+00
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:53     4   |    0.000000e+00  |    3.544532e-01  |    3.553567e-04  |    3.531180e+00
+17:03:53 Iteration successful. --------------------------------------------------------------
+17:03:53 Norm of predictor: 0.170544
+17:03:53  
+17:03:53  
+17:03:53 Time Step No. 8
+17:03:53 -----------------------------------------------------------------------------------
+17:03:53 Control Type             :  FORCE_CONTROL
+17:03:53 Traced Node              :  0
+17:03:53 Traced Global Dof Type   :  NONE
+17:03:53 Load Factor              :  8.000000e-01
+17:03:53 Equilibrium Accuracy     :  1.000000e-03
+17:03:53 Max Iter Equilibrium     :  100
+17:03:53 Number of Restarts       :  0
+17:03:53 -----------------------------------------------------------------------------------
+17:03:53   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:53 -----------------------------------------------------------------------------------
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:53     1   |    0.000000e+00  |    3.597849e-01  |    1.751375e-01  |    1.003837e+01
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:53     2   |    0.000000e+00  |    3.488821e-01  |    1.320590e-02  |    1.502950e+03
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:53 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:53     3   |    0.000000e+00  |    3.558333e-01  |    7.250978e-03  |    2.260537e+00
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:54     4   |    0.000000e+00  |    3.556755e-01  |    3.040892e-04  |    2.813263e+00
+17:03:54 Iteration successful. --------------------------------------------------------------
+17:03:54 Norm of predictor: 0.170804
+17:03:54  
+17:03:54  
+17:03:54 Time Step No. 9
+17:03:54 -----------------------------------------------------------------------------------
+17:03:54 Control Type             :  FORCE_CONTROL
+17:03:54 Traced Node              :  0
+17:03:54 Traced Global Dof Type   :  NONE
+17:03:54 Load Factor              :  9.000000e-01
+17:03:54 Equilibrium Accuracy     :  1.000000e-03
+17:03:54 Max Iter Equilibrium     :  100
+17:03:54 Number of Restarts       :  0
+17:03:54 -----------------------------------------------------------------------------------
+17:03:54   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:54 -----------------------------------------------------------------------------------
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:54     1   |    0.000000e+00  |    3.600091e-01  |    1.750966e-01  |    1.002958e+01
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:54     2   |    0.000000e+00  |    3.494224e-01  |    1.245374e-02  |    1.519030e+03
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:54 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:54     3   |    0.000000e+00  |    3.554710e-01  |    6.309488e-03  |    2.211833e+00
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:55     4   |    0.000000e+00  |    3.552379e-01  |    3.074224e-04  |    2.070089e+00
+17:03:55 Iteration successful. --------------------------------------------------------------
+17:03:55 Norm of predictor: 0.170088
+17:03:55  
+17:03:55  
+17:03:55 Time Step No. 10
+17:03:55 -----------------------------------------------------------------------------------
+17:03:55 Control Type             :  FORCE_CONTROL
+17:03:55 Traced Node              :  0
+17:03:55 Traced Global Dof Type   :  NONE
+17:03:55 Load Factor              :  1.000000e+00
+17:03:55 Equilibrium Accuracy     :  1.000000e-03
+17:03:55 Max Iter Equilibrium     :  100
+17:03:55 Number of Restarts       :  0
+17:03:55 -----------------------------------------------------------------------------------
+17:03:55   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:03:55 -----------------------------------------------------------------------------------
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:55     1   |    0.000000e+00  |    3.592568e-01  |    1.750155e-01  |    1.001984e+01
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:55     2   |    0.000000e+00  |    3.482301e-01  |    1.253102e-02  |    1.527342e+03
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:55 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:55     3   |    0.000000e+00  |    3.533952e-01  |    5.390726e-03  |    2.672042e+00
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:03:56 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:03:56     4   |    0.000000e+00  |    3.530854e-01  |    3.509122e-04  |    1.461994e+00
+17:03:56 Iteration successful. --------------------------------------------------------------
+17:03:56  
+17:03:56  
+17:03:56 Time step procedure finished. Final Summary.
+17:03:56 -----------------------------------------------------------------------------------
+17:03:56 Control Type             :  FORCE_CONTROL
+17:03:56 Time Steps               :  10
+17:03:56 Load Factor              :  1.000000e+00
+17:03:56 Traced Node              :  0
+17:03:56 Traced Global Dof Type   :  NONE
+17:03:56 Equilibrium Accuracy     :  1.000000e-03
+17:03:56 Max Iter Equilibrium     :  100
+17:03:56 -----------------------------------------------------------------------------------
+17:03:56  
+17:03:56  
+17:03:56  
+17:03:56 complete programm execution done in 0 hours, 0 minutes and  11.463000 seconds.
+17:03:56  
+17:03:56 finishing Carat++ successfully.
+17:03:56  
+17:03:56 ...Feierabend! 

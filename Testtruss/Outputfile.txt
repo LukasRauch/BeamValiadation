@@ -1,0 +1,33 @@
+
+
+### Berechnung ###
+
+Dehnung: 0.06734350296348479
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.13468700592615845
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.20203050888642804
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.2693740118417438
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.33671751478725986
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.4040610177126487
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.47140452059352445
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.5387480233653501
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.6060915258316975
+Verschiebung X an Knoten 2: 0.0
+
+Dehnung: 0.673435029701474
+Verschiebung X an Knoten 2: 0.0

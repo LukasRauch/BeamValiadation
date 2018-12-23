@@ -1,0 +1,122 @@
+!###################################################################
+!####                          PC-BLOCK                         ####
+!###################################################################
+!===================================================================
+PC-PROBLEM
+  MASTERJOB = PC-ANALYSIS 1
+!===================================================================
+PC-ANALYSIS 1: STA_GEO_NONLIN
+  PATHCONTROL = FORCE
+  SOLVER = PC-SOLVER 1
+  OUTPUT = PC-OUT 1
+  COMPCASE = LD-COM 1
+  DOMAIN = EL-DOMAIN 1
+  NUM_STEP = 10
+  MAX_ITER_EQUILIBRIUM = 100
+  EQUILIBRIUM_ACCURACY = 0.001
+  CURVE = LD-CURVE 1
+!===================================================================
+PC-SOLVER 1: MKL_PARDISO
+  BANDWITH = CUTHILL_MCKEE
+PC-SOLVER 2 : CROUT_SKYLINE
+!===================================================================
+PC-OUT 1 : RHINO
+ GEOM = 1
+ DISP = 1
+ STRESS = 0
+ STRESS_LINES = 0
+ NODAL_STRESS = 0
+ GAUSS_POINTS = 0
+ GAUSS_POINTS_GEO = 1
+ COUPLING_POINTS = 1
+ CONNECTING_POINTS = 1
+ PAR_LINES = 0
+ PAR_TRIM = 0
+ PREC = 14
+ FPN = 0
+ OUTPUT_FILE_NAME = MyAnalysis
+ ELE_PROPS = 1
+ GAUSS_POINTS_DISP = 1
+ OUTPUT_FREQUENCY = 1
+!===================================================================
+!###################################################################
+!####                          EL-BLOCK                         ####
+!###################################################################
+!===================================================================
+EL-PART 1
+  NAME=Support
+!===================================================================
+EL-MAT 1 : LIN_ELAST_ISOTROPIC
+  EMOD= 210000000
+  ALPHAT= 0
+  DENS=  78.5
+  NUE=  0
+!===================================================================
+EL-PROP 1 : BEAM_3D_NURBS_KLRod
+  MAT= EL-MAT 1
+  AREA = 0.02
+  IY = 6.66666666666667E-05
+  IZ = 1.66666666666667E-05
+  IT = 4.5775E-05
+  PRESTRESS = 0
+  PRESTRESS_BEND_1 = 0
+  PRESTRESS_BEND_2 = 0
+  PRESTRESS_TOR = 0
+  INT_TYPE_BEAM_3D_NURBS_KLRod = FULL
+  !U        n1                n2              n3
+  AXIS    0   0   0   -1
+  AXIS    2   0   0   -1
+!###################################################################
+!####                  NURBS-BLOCK-PARAMETER                    ####
+!###################################################################
+NURBS_PATCH  1 : NURBS_1D
+  CTRL_PTS = CTRL_PTS_DEF  1
+  NCTRL =  3
+  PDEG  =  3
+  UKNOT =  0, 0, 0, 0, 2, 2, 2, 2
+!===================================================================
+CTRL_PTS_DEF  1
+  CTRLPT  1  0  0  0  1
+  CTRLPT  2  0  3.33333333333333  0  1
+  CTRLPT  3  0  6.66666666666667  0  1
+  CTRLPT  4  0  10  0  1
+!###################################################################
+!####                        DESIGN-BLOCK                       ####
+!###################################################################
+!===================================================================
+!                  ID  PART  PROP   NURBS_TOP
+DE-ELTOP-NURBS
+  DE-EL   1   1   1   1
+!===================================================================
+EL-DOMAIN 1
+  ELEMENTS = EL-TOP 1
+!===================================================================
+!                  ID  PART  PROP   NURBS_TOP
+DE-BREP-NURBS
+!===================================================================
+DE-REFINEMENT
+ DE-EL   1   ep=3    ru=1
+!===================================================================
+!        ID  DE-EL     LOC COORD  BC
+DE-SUP   1   1   u=0 DISP_X, DISP_Y, DISP_Z
+DE-SUP   2   1   u=0 CLAMPED
+DE-SUP   3   1   u=0 CLAMPED_TOR
+DE-LOAD   4  DEAD  1  u=2   D1=0 D2=0 D3=-1  VAL=100
+LD-COM 1
+  TYPE=BC-DIRICHLET   1
+  TYPE=BC-DIRICHLET   2
+  TYPE=BC-DIRICHLET   3
+  TYPE=LD-NODE   4   FAC= 1.0
+!===================================================================
+LD-CURVE 1 TYPE=DISCRETE !global LDC
+  TIME = 0 VAL = 0
+  TIME = 1 VAL = 0.1
+  TIME = 2 VAL = 0.2
+  TIME = 3 VAL = 0.3
+  TIME = 4 VAL = 0.4
+  TIME = 5 VAL = 0.5
+  TIME = 6 VAL = 0.6
+  TIME = 7 VAL = 0.7
+  TIME = 8 VAL = 0.8
+  TIME = 9 VAL = 0.9
+  TIME = 10 VAL = 1
