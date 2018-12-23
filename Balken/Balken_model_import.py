@@ -19,7 +19,7 @@ start_time = time.time()
 print('Process ID: ', os.getpid())
 print(' ')
 
-model = an.Model.open(r'C:\_Masterarbeit\beispiele\Balken\Balken.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Balken\Balken.iga')
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
@@ -37,12 +37,12 @@ model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
-element_properties.SetValue(CROSS_AREA          , 0.02)     # m²
+element_properties.SetValue(CROSS_AREA          , 0.000534522)     # m²
 element_properties.SetValue(YOUNG_MODULUS       , 210000000)      # kN/m²
 element_properties.SetValue(SHEAR_MODULUS       , 81000000)     # kN/m²
-element_properties.SetValue(MOMENT_OF_INERTIA_Y , 6.66666666666667E-05)  # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , 1.666666e-5)  # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_T , 4.5775E-05) # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Y , 2.38095E-08)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 2.38095E-08)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_T , 1.18095E-08) # m4
 element_properties.SetValue(POISSON_RATIO       , 0)        # m4
 
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
@@ -70,7 +70,7 @@ integration_points = curve_item.IntegrationPoints()
 shapes = an.CurveShapeEvaluator(Degree = curve_geometry.Degree, Order = 2)
 
 # Preprozessor Definitionen
-t0 = [1, 0, 0]                  # Manuelle Vorgabe des Tangentenvektors
+# t0 = [5, 0, 0]                  # Manuelle Vorgabe des Tangentenvektors
 n0 = [0, 0, -1]                  # Manuelle Vorgabe des Normalenvektors
 phi = 0                         # manuelle Vorgabe der Rotation
 phi_der = 0                     # manuelle Vorgabe der Rotation 1st Ableitung
@@ -93,10 +93,10 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
 
     # Normierung des Tangentenvekoren
     # TODO die Normierung in Kratos übernehmen 
-    tangent_length = (tangent[0]**2 + tangent[1]**2 + tangent[2]**2)**0.5
-    tangent[0] /= tangent_length
-    tangent[1] /= tangent_length
-    tangent[2] /= tangent_length
+    # tangent_length = (tangent[0]**2 + tangent[1]**2 + tangent[2]**2)**0.5
+    # tangent[0] /= tangent_length
+    # tangent[1] /= tangent_length
+    # tangent[2] /= tangent_length
 
     # Generierung der Elemente pro Integrationspunkt
     element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
@@ -141,8 +141,8 @@ model_part.SetBufferSize(3)
 time_scheme = ResidualBasedIncrementalUpdateStaticScheme()
 
 linear_solver = new_linear_solver_factory.ConstructSolver(Parameters(
-    # r'{"solver_type": "eigen_sparse_lu"}'))
-    r'{"solver_type": "SkylineLUFactorizationSolver"}'))
+    r'{"solver_type": "eigen_sparse_lu"}'))
+    # r'{"solver_type": "SkylineLUFactorizationSolver"}'))
 
 
 # Abbruchkriterium
@@ -181,7 +181,7 @@ disp_Y = np.empty([num_load_steps, num_pole])
 disp_Z = np.empty([num_load_steps, num_pole])
 
 for i in range(1, num_load_steps+1):
-    F = i * 100/num_load_steps
+    F = i * 10/num_load_steps
     # node_2.SetSolutionStepValue(POINT_LOAD_Y, 1000 * (i + 1) / 10)
     model_part.GetNode(num_pole).SetSolutionStepValue(POINT_LOAD_Z, F)
 
@@ -197,14 +197,18 @@ for i in range(1, num_load_steps+1):
         disp_Y[i-1,j] = (model_part.GetNode(j+1).Y )
         disp_Z[i-1,j] = (model_part.GetNode(j+1).Z )
 
+print("Pole Nr. 3: ")
+print("Verschiebung in X: " + str(model_part.GetNode(num_pole-1).X - model_part.GetNode(num_pole-1).X0))
+print("Verschiebung in Y: " + str(model_part.GetNode(num_pole-1).Y - model_part.GetNode(num_pole-1).Y0))
+print("Verschiebung in Z: " + str(model_part.GetNode(num_pole-1).Z - model_part.GetNode(num_pole-1).Z0))
+
+print(" Pole Nr. 4: ")
 print("\n\nStep " + str(i) + " :: Knoten Z: " + str(model_part.GetNode(num_pole).Z))
 print("Verschiebung in X: " + str(model_part.GetNode(num_pole).X - model_part.GetNode(num_pole).X0))
 print("Verschiebung in Y: " + str(model_part.GetNode(num_pole).Y - model_part.GetNode(num_pole).Y0))
 print("Verschiebung in Z: " + str(model_part.GetNode(num_pole).Z - model_part.GetNode(num_pole).Z0))
 
-print("Verschiebung in X: " + str(model_part.GetNode(num_pole-1).X - model_part.GetNode(num_pole-1).X0))
-print("Verschiebung in Y: " + str(model_part.GetNode(num_pole-1).Y - model_part.GetNode(num_pole-1).Y0))
-print("Verschiebung in Z: " + str(model_part.GetNode(num_pole-1).Z - model_part.GetNode(num_pole-1).Z0))
+
 
 print("Prozes time:  %s seconds ---" % (time.time() - start_time))
 print('done!')
@@ -215,10 +219,10 @@ fig, ax = plt.subplots()
 # control_points = np.empty()
 
 for n in range(num_load_steps):
-    control_points =[(disp_Y[n,0], -disp_Z[n,0]),
-                    (disp_Y[n,1], -disp_Z[n,1]),
-                    (disp_Y[n,2], -disp_Z[n,2]),
-                    (disp_Y[n,3], -disp_Z[n,3])]
+    control_points =[(disp_X[n,0], -disp_Z[n,0]),
+                    (disp_X[n,1], -disp_Z[n,1]),
+                    (disp_X[n,2], -disp_Z[n,2]),
+                    (disp_X[n,3], -disp_Z[n,3])]
 
     crv = mpatches.PathPatch(Path(control_points, 
     [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4]), 
@@ -226,7 +230,7 @@ for n in range(num_load_steps):
     transform = ax.transData)
 
     ax.add_patch(crv)
-    ax.plot(disp_Y[n,:], -disp_Z[n,:], 'rx',disp_Y[n,:], -disp_Z[n,:], 'c:' )
+    ax.plot(disp_X[n,:], -disp_Z[n,:], 'rx',disp_X[n,:], -disp_Z[n,:], 'c:' )
 
 plt.show()
 plt.grid(True)
