@@ -25,7 +25,7 @@ start_time = time.time()
 print('Process ID: ', os.getpid())
 print(' ')
 
-model = an.Model.open(r'C:\_Masterarbeit\beispiele\Balken8\Balken8.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Balken8\Balken8.iga')
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
@@ -43,12 +43,12 @@ model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
-element_properties.SetValue(CROSS_AREA          , 5.3236E-03)       # m²
-element_properties.SetValue(YOUNG_MODULUS       , 210E06)           # kN/m²
-element_properties.SetValue(SHEAR_MODULUS       , 81E06)            # kN/m²
-element_properties.SetValue(MOMENT_OF_INERTIA_Y , 1.143E-05)        # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , 3.993E-06)        # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_T , 6.735E-07)        # m4
+element_properties.SetValue(CROSS_AREA          , 6000)      # m²
+element_properties.SetValue(YOUNG_MODULUS       , 1)      # kN/m²
+element_properties.SetValue(SHEAR_MODULUS       , 1)      # kN/m²
+element_properties.SetValue(MOMENT_OF_INERTIA_Y , 1)      # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 1)      # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_T , 1)      # m4
 element_properties.SetValue(POISSON_RATIO       , 0)                # m4
 
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
@@ -111,7 +111,7 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
     element.SetValue(INTEGRATION_WEIGHT, weight)
     element.SetValue(SHAPE_FUNCTION_VALUES, n_0)                # Typ Vektor
     element.SetValue(SHAPE_FUNCTION_LOCAL_DERIVATIVES, n_der)   # Typ Matrix
-    element.SetValue(KNOTSPANN, knots)                          # Knotspannvector der gesamten Kurve mitgeben
+    # element.SetValue(KNOTSPANN, knots)                          # Knotspannvector der gesamten Kurve mitgeben
     element.SetValue(T0, tangent)
 
     ### mauelle Vorgbe
@@ -178,17 +178,17 @@ solver = ResidualBasedNewtonRaphsonStrategy(
 solver.SetEchoLevel(0)
 
 num_pole = curve_geometry.NbPoles
-num_load_steps = 15
+num_load_steps = 10
 
 disp_X = []
 disp_Y = []
 disp_Z = []
 
-disp_X = np.empty([num_load_steps, num_pole])
-disp_Y = np.empty([num_load_steps, num_pole])
-disp_Z = np.empty([num_load_steps, num_pole])
+disp_X = np.empty([num_load_steps+1, num_pole])
+disp_Y = np.empty([num_load_steps+1, num_pole])
+disp_Z = np.empty([num_load_steps+1, num_pole])
 
-for i in range(num_load_steps):
+for i in range(num_load_steps+1):
     F = i * 1/num_load_steps
     # node_2.SetSolutionStepValue(POINT_LOAD_Y, 1000 * (i + 1) / 10)
     model_part.GetNode(8).SetSolutionStepValue(POINT_LOAD_Z, F)

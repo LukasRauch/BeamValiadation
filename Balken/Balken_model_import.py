@@ -37,26 +37,26 @@ model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
-element_properties.SetValue(CROSS_AREA          , 0.000534522)     # m²
-element_properties.SetValue(YOUNG_MODULUS       , 210000000)      # kN/m²
-element_properties.SetValue(SHEAR_MODULUS       , 81000000)     # kN/m²
-element_properties.SetValue(MOMENT_OF_INERTIA_Y , 2.38095E-08)  # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , 2.38095E-08)  # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_T , 1.18095E-08) # m4
+element_properties.SetValue(CROSS_AREA          , 96)     # m²
+element_properties.SetValue(YOUNG_MODULUS       , 1)      # kN/m²
+element_properties.SetValue(SHEAR_MODULUS       , 1)     # kN/m²
+element_properties.SetValue(MOMENT_OF_INERTIA_Y , 1)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 1)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_T , 1) # m4
 element_properties.SetValue(POISSON_RATIO       , 0)        # m4
 
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
 
 # Erstellen der Elemente
-nodes = []
+# nodes = []
 node_indices = []
 
 for i in range(curve_geometry.NbPoles): # Erzeugung der 4 Kontrollpunkte mit den entsprechenden Koordinaten
                                     # ID                          X,                        Y,                         Z
-    nodes = model_part.CreateNewNode(i+1, curve_geometry.Pole(i)[0], curve_geometry.Pole(i)[1], curve_geometry.Pole(i)[2])
-    nodes.SetValue(NURBS_CONTROL_POINT_WEIGHT, curve_geometry.Weight(i))
-    node_indices.append(nodes.Id)
-    kratos_curve.SetNode(Index = i, Value = nodes)
+    node = model_part.CreateNewNode(i+1, curve_geometry.Pole(i)[0], curve_geometry.Pole(i)[1], curve_geometry.Pole(i)[2])
+    node.SetValue(NURBS_CONTROL_POINT_WEIGHT, curve_geometry.Weight(i))
+    node_indices.append(node.Id)
+    kratos_curve.SetNode(Index = i, Value = node)
 
 # Erzeugen der Kurve
 for i in range(curve_geometry.NbKnots):
@@ -70,7 +70,6 @@ integration_points = curve_item.IntegrationPoints()
 shapes = an.CurveShapeEvaluator(Degree = curve_geometry.Degree, Order = 2)
 
 # Preprozessor Definitionen
-# t0 = [5, 0, 0]                  # Manuelle Vorgabe des Tangentenvektors
 n0 = [0, 0, -1]                  # Manuelle Vorgabe des Normalenvektors
 phi = 0                         # manuelle Vorgabe der Rotation
 phi_der = 0                     # manuelle Vorgabe der Rotation 1st Ableitung
@@ -89,18 +88,12 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
         n_der[1,i] = shapes(2, i)
 
     # Tangentenvektor ausgewertet an Gausspunkt n
+    # Normierung des Tangentenvektors erfolgt Kratos-intern
     point, tangent = kratos_curve.DerivativesAt(T=t, Order=1)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
-
-    # Normierung des Tangentenvekoren
-    # TODO die Normierung in Kratos übernehmen 
-    # tangent_length = (tangent[0]**2 + tangent[1]**2 + tangent[2]**2)**0.5
-    # tangent[0] /= tangent_length
-    # tangent[1] /= tangent_length
-    # tangent[2] /= tangent_length
 
     # Generierung der Elemente pro Integrationspunkt
     element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
-    element.SetValue(INTEGRATION_WEIGHT, weight)
+    element.SetValue(INTEGRATION_WEIGHT, weight)  # *2
     element.SetValue(SHAPE_FUNCTION_VALUES, n_0)                # Typ Vektor
     element.SetValue(SHAPE_FUNCTION_LOCAL_DERIVATIVES, n_der)   # Typ Matrix
     element.SetValue(T0, tangent)
@@ -133,7 +126,6 @@ load_properties = model_part.GetProperties()[2] # propperty-ID = 2
 #                             typ,                     Id,  Knoten                   , Eigenschaften
 model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(4).Id], load_properties)
 
-
 # Löser konfigurieren
 model_part.SetBufferSize(3)
 
@@ -144,7 +136,6 @@ linear_solver = new_linear_solver_factory.ConstructSolver(Parameters(
     r'{"solver_type": "eigen_sparse_lu"}'))
     # r'{"solver_type": "SkylineLUFactorizationSolver"}'))
 
-
 # Abbruchkriterium
 relative_tolerance = 1e-7
 absolute_tolerance = 1e-7
@@ -152,7 +143,7 @@ conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(2)
 
 # Löser
-maximum_iterations = 10 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
+maximum_iterations = 25
 compute_reactions = True
 reform_dofs_at_each_iteration = True
 move_mesh_flag = True
@@ -181,15 +172,16 @@ disp_Y = np.empty([num_load_steps, num_pole])
 disp_Z = np.empty([num_load_steps, num_pole])
 
 for i in range(1, num_load_steps+1):
-    F = i * 10/num_load_steps
+    F = i * 1/num_load_steps
     # node_2.SetSolutionStepValue(POINT_LOAD_Y, 1000 * (i + 1) / 10)
-    model_part.GetNode(num_pole).SetSolutionStepValue(POINT_LOAD_Z, F)
+    model_part.GetNode(4).SetSolutionStepValue(POINT_LOAD_Z, F)
 
     # aktuellen modellzustand kopieren
     model_part.CloneTimeStep(i+1)
 
     # aktuellen zustand lösen
     print("solver step: ", i, "F =", F)
+    print("Verhältnis F*L^2/EI= ", F/(element_properties.GetValue(YOUNG_MODULUS)*element_properties.GetValue(MOMENT_OF_INERTIA_Y) ))
     solver.Solve()
 
     for j in range(curve_geometry.NbPoles):
@@ -197,16 +189,16 @@ for i in range(1, num_load_steps+1):
         disp_Y[i-1,j] = (model_part.GetNode(j+1).Y )
         disp_Z[i-1,j] = (model_part.GetNode(j+1).Z )
 
-print("Pole Nr. 3: ")
-print("Verschiebung in X: " + str(model_part.GetNode(num_pole-1).X - model_part.GetNode(num_pole-1).X0))
-print("Verschiebung in Y: " + str(model_part.GetNode(num_pole-1).Y - model_part.GetNode(num_pole-1).Y0))
-print("Verschiebung in Z: " + str(model_part.GetNode(num_pole-1).Z - model_part.GetNode(num_pole-1).Z0))
+    print("Pole Nr. 3: ")
+    print("Verschiebung in X: " + str(model_part.GetNode(num_pole-1).X - model_part.GetNode(num_pole-1).X0))
+    print("Verschiebung in Y: " + str(model_part.GetNode(num_pole-1).Y - model_part.GetNode(num_pole-1).Y0))
+    print("Verschiebung in Z: " + str(model_part.GetNode(num_pole-1).Z - model_part.GetNode(num_pole-1).Z0))
 
-print(" Pole Nr. 4: ")
-print("\n\nStep " + str(i) + " :: Knoten Z: " + str(model_part.GetNode(num_pole).Z))
-print("Verschiebung in X: " + str(model_part.GetNode(num_pole).X - model_part.GetNode(num_pole).X0))
-print("Verschiebung in Y: " + str(model_part.GetNode(num_pole).Y - model_part.GetNode(num_pole).Y0))
-print("Verschiebung in Z: " + str(model_part.GetNode(num_pole).Z - model_part.GetNode(num_pole).Z0))
+    print(" Pole Nr. 4: ")
+    print("\n\nStep " + str(i) + " :: Knoten Z: " + str(model_part.GetNode(num_pole).Z))
+    print("Verschiebung in X: " + str(model_part.GetNode(num_pole).X - model_part.GetNode(num_pole).X0))
+    print("Verschiebung in Y: " + str(model_part.GetNode(num_pole).Y - model_part.GetNode(num_pole).Y0))
+    print("Verschiebung in Z: " + str(model_part.GetNode(num_pole).Z - model_part.GetNode(num_pole).Z0))
 
 
 

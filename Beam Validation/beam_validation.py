@@ -75,8 +75,8 @@ for data in yaml.load_all(stream):
     element.SetValue(N0, data['N0_vec'])
     element.SetValue(PHI, data['PHI_PROP'])
     element.SetValue(PHI_0_DER, data['PHI_DER_PROP'])
-    element.SetValue(INTEGRATION_WEIGHT, data['gp_w']*2)
-    element.SetValue(KNOTSPANN, data['kNodspann'])
+    element.SetValue(INTEGRATION_WEIGHT, data['gp_w']/2) # *2  
+    # element.SetValue(KNOTSPANN, data['kNodspann'])
 
     # Shape Functions
     n_0 = Vector(4)
