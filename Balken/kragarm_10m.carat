@@ -47,17 +47,17 @@ EL-PART 1
   NAME=Support
 !===================================================================
 EL-MAT 1 : LIN_ELAST_ISOTROPIC
-  EMOD= 210000000
+  EMOD= 1
   ALPHAT= 0
   DENS=  78.5
   NUE=  0
 !===================================================================
 EL-PROP 1 : BEAM_3D_NURBS_KLRod
   MAT= EL-MAT 1
-  AREA = 0.000239046
-  IY = 4.7619E-09
-  IZ = 4.7619E-09
-  IT =  2.3619E-09
+  AREA = 100
+  IY = 100
+  IZ = 500
+  IT = 100
   PRESTRESS = 0
   PRESTRESS_BEND_1 = 0
   PRESTRESS_BEND_2 = 0
@@ -65,7 +65,7 @@ EL-PROP 1 : BEAM_3D_NURBS_KLRod
   INT_TYPE_BEAM_3D_NURBS_KLRod = FULL
   !U        n1                n2              n3
   AXIS    0   0   0   -1
-  AXIS    2   0   0   -1
+  AXIS    10   0   0   -1
 !###################################################################
 !####                  NURBS-BLOCK-PARAMETER                    ####
 !###################################################################
@@ -77,9 +77,9 @@ NURBS_PATCH  1 : NURBS_1D
 !===================================================================
 CTRL_PTS_DEF  1
   CTRLPT  1  0  0  0  1
-  CTRLPT  2   0.33333333333333  0 0  1
-  CTRLPT  3   0.66666666666667  0 0  1
-  CTRLPT  4   1  0 0 1
+  CTRLPT  2  3.33333333333333  0  0  1
+  CTRLPT  3  6.66666666666667  0  0  1
+  CTRLPT  4  10  0  0  1
 !###################################################################
 !####                        DESIGN-BLOCK                       ####
 !###################################################################
@@ -101,7 +101,7 @@ DE-REFINEMENT
 DE-SUP   1   1   u=0 DISP_X, DISP_Y, DISP_Z
 DE-SUP   2   1   u=0 CLAMPED
 DE-SUP   3   1   u=0 CLAMPED_TOR
-DE-LOAD   4  DEAD  1  u=2   D1=0 D2=0 D3=-1  VAL=100
+DE-LOAD   4  DEAD  1  u=10   D1=0 D2=0 D3=-1  VAL=1
 LD-COM 1
   TYPE=BC-DIRICHLET   1
   TYPE=BC-DIRICHLET   2

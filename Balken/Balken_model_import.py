@@ -91,6 +91,11 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
     # Normierung des Tangentenvektors erfolgt Kratos-intern
     point, tangent = kratos_curve.DerivativesAt(T=t, Order=1)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
 
+    tangent = Vector(3)
+    tangent[0] = 1
+    tangent[1] = 0
+    tangent[2] = 0
+
     # Generierung der Elemente pro Integrationspunkt
     element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
     element.SetValue(INTEGRATION_WEIGHT, weight)  # *2

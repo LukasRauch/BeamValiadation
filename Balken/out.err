@@ -1,9 +1,9 @@
-14:45:31 Warning in Dof::activate_BCDirichlet:
-14:45:31 DOF has already an activated Dirichlet BC.
-14:45:31 Old Dirichlet BC will be overwritten.
-14:45:31 Warning in Dof::activate_BCDirichlet:
-14:45:31 DOF has already an activated Dirichlet BC.
-14:45:31 Old Dirichlet BC will be overwritten.
-14:45:31 Warning in Dof::activate_BCDirichlet:
-14:45:31 DOF has already an activated Dirichlet BC.
-14:45:31 Old Dirichlet BC will be overwritten.
+14:17:34 Warning in Dof::activate_BCDirichlet:
+14:17:34 DOF has already an activated Dirichlet BC.
+14:17:34 Old Dirichlet BC will be overwritten.
+14:17:34 Warning in Dof::activate_BCDirichlet:
+14:17:34 DOF has already an activated Dirichlet BC.
+14:17:34 Old Dirichlet BC will be overwritten.
+14:17:34 Warning in Dof::activate_BCDirichlet:
+14:17:34 DOF has already an activated Dirichlet BC.
+14:17:34 Old Dirichlet BC will be overwritten.
