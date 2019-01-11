@@ -129,7 +129,7 @@ conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(0)
 
 # löser
-maximum_iterations = 1000 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
+maximum_iterations = 0 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
 compute_reactions = True
 reform_dofs_at_each_iteration = True
 move_mesh_flag = True
@@ -144,7 +144,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
     reform_dofs_at_each_iteration,
     move_mesh_flag
 )
-solver.SetEchoLevel(3)
+solver.SetEchoLevel(1)
 
 
 # system lösen
@@ -174,7 +174,7 @@ worksheet.write('A4', 'Knot Nr.')
 
 
 
-for i in range(100):
+for i in range(1):
     F = i * 500/100
     # node_2.SetSolutionStepValue(POINT_LOAD_Y, 1000 * (i + 1) / 10)
     node_2.SetSolutionStepValue(POINT_LOAD_Z, F)

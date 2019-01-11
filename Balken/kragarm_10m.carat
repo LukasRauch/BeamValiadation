@@ -11,9 +11,9 @@ PC-ANALYSIS 1: STA_GEO_NONLIN
   OUTPUT = PC-OUT 1
   COMPCASE = LD-COM 1
   DOMAIN = EL-DOMAIN 1
-  NUM_STEP = 10
-  MAX_ITER_EQUILIBRIUM = 100
-  EQUILIBRIUM_ACCURACY = 0.001
+  NUM_STEP = 2
+  MAX_ITER_EQUILIBRIUM = 1
+  EQUILIBRIUM_ACCURACY = 1e+7
   CURVE = LD-CURVE 1
 !===================================================================
 PC-SOLVER 1: MKL_PARDISO
@@ -65,7 +65,7 @@ EL-PROP 1 : BEAM_3D_NURBS_KLRod
   INT_TYPE_BEAM_3D_NURBS_KLRod = FULL
   !U        n1                n2              n3
   AXIS    0   0   0   -1
-  AXIS    10   0   0   -1
+  AXIS    1   0   0   -1
 !###################################################################
 !####                  NURBS-BLOCK-PARAMETER                    ####
 !###################################################################
@@ -73,7 +73,7 @@ NURBS_PATCH  1 : NURBS_1D
   CTRL_PTS = CTRL_PTS_DEF  1
   NCTRL =  3
   PDEG  =  3
-  UKNOT =  0, 0, 0, 0, 10, 10, 10, 10
+  UKNOT =  0, 0, 0, 0, 1, 1, 1, 1
 !===================================================================
 CTRL_PTS_DEF  1
   CTRLPT  1  0  0  0  1
@@ -101,7 +101,7 @@ DE-REFINEMENT
 DE-SUP   1   1   u=0 DISP_X, DISP_Y, DISP_Z
 DE-SUP   2   1   u=0 CLAMPED
 DE-SUP   3   1   u=0 CLAMPED_TOR
-DE-LOAD   4  DEAD  1  u=10   D1=0 D2=0 D3=-1  VAL=1
+DE-LOAD   4  DEAD  1  u=1   D1=0 D2=0 D3=-1  VAL=1
 LD-COM 1
   TYPE=BC-DIRICHLET   1
   TYPE=BC-DIRICHLET   2

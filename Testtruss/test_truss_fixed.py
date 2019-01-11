@@ -149,5 +149,5 @@ for i in range(10):
 
 
 # auflagerverschiebung am knoten 2
-print(node_2.X - node_2.X0)
-print(node_2.GetValue(DISPLACEMENT_X))
+    print(node_2.X - node_2.X0)
+    print(node_2.GetValue(DISPLACEMENT_X))
