@@ -1,192 +1,237 @@
-17:53:19  
-17:53:19  
-17:53:19    ***********************************************
-17:53:19    *                 ===========                 *
-17:53:19    *                  CARAT 2.0                  *
-17:53:19    *                 ===========                 *
-17:53:19    *                                             *
-17:53:19    *                 SERIAL CODE!                *
-17:53:19    *                                             *
-17:53:19    *                Version 0.1.0                *
-17:53:19    *                                             *
-17:53:19    *  Computer Aided Research and Analysis Tool  *
-17:53:19    *          (object-oriented version)          *
-17:53:19    *        Chair of Structural Analysis,        *
-17:53:19    *   Prof. Dr. K.-U. Bletzinger, TU Muenchen   *
-17:53:19    ***********************************************
-17:53:19  
-17:53:19  
-17:53:19 Used logging system: RLOG
-17:53:19 
-17:53:19 This is a DEBUG version of Carat
-17:53:19 
-17:53:19 --------------------------------------
-17:53:19  ... starting Preprocessing
-17:53:19 --------------------------------------
-17:53:19  
-17:53:19 Reading input file: C:/_Masterarbeit/BeamValidation/Balken/kragarm_10m.carat
-17:53:19  
-17:53:19 Input file path detected: C:/_Masterarbeit/BeamValidation/Balken
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:257) Reading of global data finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:280) Reading of Level-Set finished
-17:53:19 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
-17:53:19 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
-17:53:19 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
-17:53:19 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
-17:53:19 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:695) set_Nurbs_Patch: NURBS curve has been successfully parsed
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:353) Reading of NURBS/BSPLINE/TSPLINE/TRIMMING topology finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:363) Reading of coordinate systems finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:407) Reading of materials, properties, stacks and flattening strategy finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:418) Reading of parts finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:429) Reading of Load Curves finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:438) DesignControl object created
-17:53:19 Reading of design nodes finished
-17:53:19 Reading of design evaluation points finished
-17:53:19 Reading of design elements finished
-17:53:19 Reading of design boundaries finished
-17:53:19 Reading of design optimization refinement finished
-17:53:19 Reading of design elements finished
-17:53:19 Reading of design joints finished
-17:53:19 Reading of design supports finished
-17:53:19 Reading of design loads finished
-17:53:19 Reading of design interfaces finished
-17:53:19 load design finished
-17:53:19 Starting to mesh design elements!
-17:53:19 
-17:53:19 Finish meshing design elements!
-17:53:19 
-17:53:19 Starting to create the elements from DE elements!
-17:53:19 
-17:53:19 Creating elements from DE elements done!
-17:53:19 
-17:53:19 Starting to create elements from DE boundary elements!
-17:53:19 
-17:53:19 Creating elements from DE boundary elements done!
-17:53:19 
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:443) Reading of design finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:454) Reading of nodes finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:464) Reading of control point parametre sets finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:476) Reading of chambers finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:492) Reading of Extraction operator and Bezier elements finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:503) Reading of elements and element sets finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:521) Reading of Dirichlet bc's finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:532) Reading of Neumann bc's finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:543) Reading of computation cases finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:561) Reading of Interfaces and Surfaces finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:580) Reading of contact properties and contact pairs finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:626) Reading of Actuators finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:635) Reading of Sensors finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:644) Reading of Controller finished
-17:53:19 (..\..\src\module_femkernel\InputControl.cpp:654) Reading of Mesh Regularization finished
-17:53:20 (..\..\src\module_femkernel\InputControl.cpp:713) Reading of analysis block finished
-17:53:20 (..\..\src\module_femkernel\InputControl.cpp:835) Reading of problem block finished
-17:53:20 (..\..\src\module_femkernel\InputControl.cpp:850) Dummyrun for parameters finished
-17:53:20 (..\..\src\module_femkernel\InputControl.cpp:873) InputControl::load_Problem() finished
-17:53:20 complete preprocessing done in 0.222000 seconds.
-17:53:20  
-17:53:20 --------------------------------------
-17:53:20  ... starting Solution of problem 1:
-17:53:20 --------------------------------------
-17:53:20  
-17:53:20 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:448) get Data
-17:53:20 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:454) write state
-17:53:20 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:460) prepare Domain
-17:53:20 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:650) Number of elements before contact search in AnaStaGeoNonLin: 1
-17:53:20 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:657) Number of elements after contact search  in AnaStaGeoNonLin: 1
-17:53:20 Bandwidth reduction started!
-17:53:20 (..\..\src\module_femkernel\SolverBasis_open.cpp:345) part one takes 0.001000 seconds!
-17:53:20 Original bandwith  : 3 
-17:53:20 Original profile   : 14 
-17:53:20 Using 'CUTHILL_MCKEE' algorithm
-17:53:20 Original ordering better than new one!
-17:53:20 Bandwith reduction finished in 0.002000 seconds!
-17:53:20  
-17:53:20 (..\..\src\module_femkernel\SolverBasis_open.cpp:494)  
-17:53:20 GlobalSparseMatrix: starting dry run
-17:53:20 GlobalSparseMatrix: dry run done in 0.000000 seconds.
-17:53:20  
-17:53:20 creation of equation system in 0.000000 seconds.
-17:53:20  
-17:53:20  
-17:53:20  
-17:53:20 Start of time step procedure. Control data.
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20 Control Type                :  FORCE_CONTROL
-17:53:20 Time Steps                  :  2
-17:53:20 Traced Node                 :  0
-17:53:20 Traced Global Dof Type      :  NONE
-17:53:20 Equilibrium Accuracy        :  1.000000e+07
-17:53:20 Max Iter Equilibrium        :  1
-17:53:20 Max. Number of Restarts     :  0
-17:53:20 Step Length Control Algo    :  FIXED
-17:53:20 Suppl. Eigenvalue Analysis  :  NO
-17:53:20 Use Imperfect Design        :  NO
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20  
-17:53:20  
-17:53:20 Time Step No. 1
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20 Control Type             :  FORCE_CONTROL
-17:53:20 Traced Node              :  0
-17:53:20 Traced Global Dof Type   :  NONE
-17:53:20 Load Factor              :  1.000000e-01
-17:53:20 Equilibrium Accuracy     :  1.000000e+07
-17:53:20 Max Iter Equilibrium     :  1
-17:53:20 Number of Restarts       :  0
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
-17:53:20     1   |    0.000000e+00  |    3.858612e-01  |    3.726780e-01  |    1.000000e-01
-17:53:20 Iteration successful. --------------------------------------------------------------
-17:53:20 Norm of predictor: 0.372678
-17:53:20  
-17:53:20  
-17:53:20 Time Step No. 2
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20 Control Type             :  FORCE_CONTROL
-17:53:20 Traced Node              :  0
-17:53:20 Traced Global Dof Type   :  NONE
-17:53:20 Load Factor              :  2.000000e-01
-17:53:20 Equilibrium Accuracy     :  1.000000e+07
-17:53:20 Max Iter Equilibrium     :  1
-17:53:20 Number of Restarts       :  0
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
-17:53:20 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
-17:53:20     1   |    0.000000e+00  |    7.516687e-01  |    3.726146e-01  |    1.420518e-01
-17:53:20 Iteration successful. --------------------------------------------------------------
-17:53:20  
-17:53:20  
-17:53:20 Time step procedure finished. Final Summary.
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20 Control Type             :  FORCE_CONTROL
-17:53:20 Time Steps               :  2
-17:53:20 Load Factor              :  2.000000e-01
-17:53:20 Traced Node              :  0
-17:53:20 Traced Global Dof Type   :  NONE
-17:53:20 Equilibrium Accuracy     :  1.000000e+07
-17:53:20 Max Iter Equilibrium     :  1
-17:53:20 -----------------------------------------------------------------------------------
-17:53:20  
-17:53:20  
-17:53:20  
-17:53:20 complete programm execution done in 0 hours, 0 minutes and  0.954000 seconds.
-17:53:20  
-17:53:20 finishing Carat++ successfully.
-17:53:20  
-17:53:20 ...Feierabend! 
+17:48:25  
+17:48:25  
+17:48:25    ***********************************************
+17:48:25    *                 ===========                 *
+17:48:25    *                  CARAT 2.0                  *
+17:48:25    *                 ===========                 *
+17:48:25    *                                             *
+17:48:25    *                 SERIAL CODE!                *
+17:48:25    *                                             *
+17:48:25    *                Version 0.1.0                *
+17:48:25    *                                             *
+17:48:25    *  Computer Aided Research and Analysis Tool  *
+17:48:25    *          (object-oriented version)          *
+17:48:25    *        Chair of Structural Analysis,        *
+17:48:25    *   Prof. Dr. K.-U. Bletzinger, TU Muenchen   *
+17:48:25    ***********************************************
+17:48:25  
+17:48:25  
+17:48:25 Used logging system: RLOG
+17:48:25 
+17:48:25 This is a DEBUG version of Carat
+17:48:25 
+17:48:25 --------------------------------------
+17:48:25  ... starting Preprocessing
+17:48:25 --------------------------------------
+17:48:25  
+17:48:25 Reading input file: C:/_Masterarbeit/BeamValidation/Balken/kragarm_10m [0;1].carat
+17:48:25  
+17:48:25 Input file path detected: C:/_Masterarbeit/BeamValidation/Balken
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:257) Reading of global data finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:280) Reading of Level-Set finished
+17:48:25 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:48:25 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:48:25 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:48:25 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:183) NURBS control points are parsed
+17:48:25 (c:\_masterarbeit\carat\src\module_femkernel\InputCarat_inl_SpiritFunctors_nurbs.h:695) set_Nurbs_Patch: NURBS curve has been successfully parsed
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:353) Reading of NURBS/BSPLINE/TSPLINE/TRIMMING topology finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:363) Reading of coordinate systems finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:407) Reading of materials, properties, stacks and flattening strategy finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:418) Reading of parts finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:429) Reading of Load Curves finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:438) DesignControl object created
+17:48:25 Reading of design nodes finished
+17:48:25 Reading of design evaluation points finished
+17:48:25 Reading of design elements finished
+17:48:25 Reading of design boundaries finished
+17:48:25 Reading of design optimization refinement finished
+17:48:25 Reading of design elements finished
+17:48:25 Reading of design joints finished
+17:48:25 Reading of design supports finished
+17:48:25 Reading of design loads finished
+17:48:25 Reading of design interfaces finished
+17:48:25 load design finished
+17:48:25 Starting to mesh design elements!
+17:48:25 
+17:48:25 Finish meshing design elements!
+17:48:25 
+17:48:25 Starting to create the elements from DE elements!
+17:48:25 
+17:48:25 Creating elements from DE elements done!
+17:48:25 
+17:48:25 Starting to create elements from DE boundary elements!
+17:48:25 
+17:48:25 Creating elements from DE boundary elements done!
+17:48:25 
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:443) Reading of design finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:454) Reading of nodes finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:464) Reading of control point parametre sets finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:476) Reading of chambers finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:492) Reading of Extraction operator and Bezier elements finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:503) Reading of elements and element sets finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:521) Reading of Dirichlet bc's finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:532) Reading of Neumann bc's finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:543) Reading of computation cases finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:561) Reading of Interfaces and Surfaces finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:580) Reading of contact properties and contact pairs finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:626) Reading of Actuators finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:635) Reading of Sensors finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:644) Reading of Controller finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:654) Reading of Mesh Regularization finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:713) Reading of analysis block finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:835) Reading of problem block finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:850) Dummyrun for parameters finished
+17:48:25 (..\..\src\module_femkernel\InputControl.cpp:873) InputControl::load_Problem() finished
+17:48:25 complete preprocessing done in 0.346000 seconds.
+17:48:25  
+17:48:25 --------------------------------------
+17:48:25  ... starting Solution of problem 1:
+17:48:25 --------------------------------------
+17:48:25  
+17:48:25 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:448) get Data
+17:48:25 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:454) write state
+17:48:25 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:460) prepare Domain
+17:48:25 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:650) Number of elements before contact search in AnaStaGeoNonLin: 1
+17:48:25 (..\..\src\module_femkernel\AnalysisStaGeoNonLin.cpp:657) Number of elements after contact search  in AnaStaGeoNonLin: 1
+17:48:25 Bandwidth reduction started!
+17:48:25 (..\..\src\module_femkernel\SolverBasis_open.cpp:345) part one takes 0.000000 seconds!
+17:48:25 Original bandwith  : 3 
+17:48:25 Original profile   : 14 
+17:48:25 Using 'CUTHILL_MCKEE' algorithm
+17:48:25 Original ordering better than new one!
+17:48:25 Bandwith reduction finished in 0.004000 seconds!
+17:48:25  
+17:48:25 (..\..\src\module_femkernel\SolverBasis_open.cpp:494)  
+17:48:25 GlobalSparseMatrix: starting dry run
+17:48:25 GlobalSparseMatrix: dry run done in 0.001000 seconds.
+17:48:25  
+17:48:25 creation of equation system in 0.000000 seconds.
+17:48:25  
+17:48:25  
+17:48:25  
+17:48:25 Start of time step procedure. Control data.
+17:48:25 -----------------------------------------------------------------------------------
+17:48:25 Control Type                :  FORCE_CONTROL
+17:48:25 Time Steps                  :  2
+17:48:25 Traced Node                 :  0
+17:48:25 Traced Global Dof Type      :  NONE
+17:48:25 Equilibrium Accuracy        :  1.000000e-07
+17:48:25 Max Iter Equilibrium        :  100
+17:48:25 Max. Number of Restarts     :  0
+17:48:25 Step Length Control Algo    :  FIXED
+17:48:25 Suppl. Eigenvalue Analysis  :  NO
+17:48:25 Use Imperfect Design        :  NO
+17:48:25 -----------------------------------------------------------------------------------
+17:48:25  
+17:48:25  
+17:48:25 Time Step No. 1
+17:48:25 -----------------------------------------------------------------------------------
+17:48:25 Control Type             :  FORCE_CONTROL
+17:48:25 Traced Node              :  0
+17:48:25 Traced Global Dof Type   :  NONE
+17:48:25 Load Factor              :  1.000000e+00
+17:48:25 Equilibrium Accuracy     :  1.000000e-07
+17:48:25 Max Iter Equilibrium     :  100
+17:48:25 Number of Restarts       :  0
+17:48:25 -----------------------------------------------------------------------------------
+17:48:25   Iter  |    TracedDisp    |   ArcLength dS   |      ||dU||      |     ||RHS||     
+17:48:25 -----------------------------------------------------------------------------------
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:26     1   |    0.000000e+00  |    3.858612e+00  |    3.726780e+00  |    1.000000e+00
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:26     2   |    0.000000e+00  |    3.714960e+00  |    6.609257e-01  |    1.175644e+01
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:26 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:26     3   |    0.000000e+00  |    3.568603e+00  |    1.525486e-01  |    4.703558e-01
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:27     4   |    0.000000e+00  |    3.580869e+00  |    1.338359e-02  |    3.129052e-02
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:27     5   |    0.000000e+00  |    3.578442e+00  |    2.576033e-03  |    1.646297e-03
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:27     6   |    0.000000e+00  |    3.578821e+00  |    4.030792e-04  |    3.240698e-04
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:27 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:27     7   |    0.000000e+00  |    3.578760e+00  |    6.488486e-05  |    5.042729e-05
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:28     8   |    0.000000e+00  |    3.578769e+00  |    1.040180e-05  |    8.126293e-06
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:28     9   |    0.000000e+00  |    3.578768e+00  |    1.668603e-06  |    1.302507e-06
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:28    10   |    0.000000e+00  |    3.578768e+00  |    2.676419e-07  |    2.089477e-07
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:118) Solver MKL PARDISO: starting solution of equation system.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:386) Solver memory is released!
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:405) Reordering completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:406) Number of nonzeros in factors = 82
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:407) Number of factorization MFLOPS = 0
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:433) Factorization completed ... 
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:480) Solver MKL PARDISO: The system has been solved.
+17:48:28 (..\..\src\module_solver\SolverLinDirectMKLPardiso.cpp:481)  
+17:48:28    11   |    0.000000e+00  |    3.578768e+00  |    4.293010e-08  |    3.351478e-08
+17:48:28 Iteration successful. --------------------------------------------------------------

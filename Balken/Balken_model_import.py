@@ -39,11 +39,13 @@ model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 element_properties = model_part.GetProperties()[1] # property-id = 1
 element_properties.SetValue(CROSS_AREA          , 100)     # m²
 element_properties.SetValue(YOUNG_MODULUS       , 1)      # kN/m²
-element_properties.SetValue(SHEAR_MODULUS       , 1)     # kN/m²
+element_properties.SetValue(SHEAR_MODULUS       , 0.5)     # kN/m²
 element_properties.SetValue(MOMENT_OF_INERTIA_Y , 100)  # m4
 element_properties.SetValue(MOMENT_OF_INERTIA_Z , 500)  # m4
 element_properties.SetValue(MOMENT_OF_INERTIA_T , 100) # m4
 element_properties.SetValue(POISSON_RATIO       , 0)        # m4
+element_properties.SetValue(DENSITY             ,78.5)
+element_properties.SetValue(POISSON_RATIO       ,0)
 
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
 
@@ -149,7 +151,7 @@ conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(1)
 
 # Löser
-maximum_iterations = 0
+maximum_iterations = 100
 compute_reactions = True
 reform_dofs_at_each_iteration = True
 move_mesh_flag = True
@@ -167,7 +169,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
 solver.SetEchoLevel(1)
 
 num_pole = curve_geometry.NbPoles
-num_load_steps = 2
+num_load_steps = 1
 
 disp_X = []
 disp_Y = []
