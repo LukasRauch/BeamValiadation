@@ -35,6 +35,13 @@ model_part.AddNodalSolutionStepVariable(REACTION)
 model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
 model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 
+# Querschnittswerte 
+a = 1       # Querschnittshöhe
+b = 1       # Querschnittsbreite
+A = a * b   # Querschnittsfäche
+Iy = (a * b^3)/12   # Flächenträgheitsmoment Iy
+Iz = (b * a^3)/12   # Flächenträgheitsmoment Iz
+
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
 element_properties.SetValue(CROSS_AREA          , 100)     # m²
@@ -44,8 +51,7 @@ element_properties.SetValue(MOMENT_OF_INERTIA_Y , 100)  # m4
 element_properties.SetValue(MOMENT_OF_INERTIA_Z , 500)  # m4
 element_properties.SetValue(MOMENT_OF_INERTIA_T , 100) # m4
 element_properties.SetValue(POISSON_RATIO       , 0)        # m4
-element_properties.SetValue(DENSITY             ,78.5)
-element_properties.SetValue(POISSON_RATIO       ,0)
+element_properties.SetValue(DENSITY             , 78.5)
 
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
 
@@ -126,6 +132,7 @@ model_part.GetNode(1).Fix(DISPLACEMENT_Z)
 model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
 # model_part.GetNode(2).Fix(DISPLACEMENT_X)
+# model_part.GetNode(2).Fix(DISPLACEMENT_X)
 model_part.GetNode(2).Fix(DISPLACEMENT_Y)
 model_part.GetNode(2).Fix(DISPLACEMENT_Z)
 
@@ -169,7 +176,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
 solver.SetEchoLevel(1)
 
 num_pole = curve_geometry.NbPoles
-num_load_steps = 1
+num_load_steps = 10
 
 disp_X = []
 disp_Y = []
@@ -188,8 +195,8 @@ for i in range(1, num_load_steps+1):
     model_part.CloneTimeStep(i+1)
 
     # aktuellen zustand lösen
-    print("solver step: ", i)
-    # print("solver step: ", i, "F =", F)
+    # print("solver step: ", i)
+    print("solver step: ", i, "F =", F)
     # print("Verhältnis F*L^2/EI= ", F/(element_properties.GetValue(YOUNG_MODULUS)*element_properties.GetValue(MOMENT_OF_INERTIA_Y) ))
     solver.Solve()
 
@@ -197,16 +204,17 @@ for i in range(1, num_load_steps+1):
         disp_X[i-1,j] = (model_part.GetNode(j+1).X )
         disp_Y[i-1,j] = (model_part.GetNode(j+1).Y )
         disp_Z[i-1,j] = (model_part.GetNode(j+1).Z )
+    
 
+    print("Pole Nr. 1: ")
+    print("Verschiebung in X: " + str(model_part.GetNode(2).X - model_part.GetNode(2).X0))
     # print("Pole Nr. 3: ")
     # print("Verschiebung in X: " + str(model_part.GetNode(num_pole-1).X - model_part.GetNode(num_pole-1).X0))
     # print("Verschiebung in Y: " + str(model_part.GetNode(num_pole-1).Y - model_part.GetNode(num_pole-1).Y0))
     # print("Verschiebung in Z: " + str(model_part.GetNode(num_pole-1).Z - model_part.GetNode(num_pole-1).Z0))
-
     print("Pole Nr. 4: ")
-    # print("\n\nStep " + str(i) + " :: Knoten Z: " + str(model_part.GetNode(num_pole).Z))
-    # print("Verschiebung in X: " + str(model_part.GetNode(num_pole).X - model_part.GetNode(num_pole).X0))
-    # print("Verschiebung in Y: " + str(model_part.GetNode(num_pole).Y - model_part.GetNode(num_pole).Y0))
+    print("Verschiebung in X: " + str(model_part.GetNode(num_pole).X - model_part.GetNode(num_pole).X0))
+    print("Verschiebung in Y: " + str(model_part.GetNode(num_pole).Y - model_part.GetNode(num_pole).Y0))
     print("Verschiebung in Z: " + str(model_part.GetNode(num_pole).Z - model_part.GetNode(num_pole).Z0))
 
 

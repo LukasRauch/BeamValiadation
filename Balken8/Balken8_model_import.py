@@ -43,26 +43,27 @@ model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
-element_properties.SetValue(CROSS_AREA          , 6000)      # m²
+element_properties.SetValue(CROSS_AREA          , 1000)      # m²
 element_properties.SetValue(YOUNG_MODULUS       , 1)      # kN/m²
-element_properties.SetValue(SHEAR_MODULUS       , 1)      # kN/m²
-element_properties.SetValue(MOMENT_OF_INERTIA_Y , 1)      # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , 1)      # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_T , 1)      # m4
+element_properties.SetValue(SHEAR_MODULUS       , 0.5)      # kN/m²
+element_properties.SetValue(MOMENT_OF_INERTIA_Y , 100)      # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 100)      # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_T , 100)      # m4
 element_properties.SetValue(POISSON_RATIO       , 0)                # m4
-
+element_properties.SetValue(DENSITY             , 78.5)
+element_properties.SetValue(POISSON_RATIO       , 0)
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
 
 # Erstellen der Elemente
-nodes = []
+node = []
 node_indices = []
 
 for i in range(curve_geometry.NbPoles): # Erzeugung der 4 Kontrollpunkte mit den entsprechenden Koordinaten
                                     # ID                          X,                        Y,                         Z
-    nodes = model_part.CreateNewNode(i+1, curve_geometry.Pole(i)[0], curve_geometry.Pole(i)[1], curve_geometry.Pole(i)[2])
-    nodes.SetValue(NURBS_CONTROL_POINT_WEIGHT, curve_geometry.Weight(i))
-    node_indices.append(nodes.Id)
-    kratos_curve.SetNode(Index = i, Value = nodes)
+    node = model_part.CreateNewNode(i+1, curve_geometry.Pole(i)[0], curve_geometry.Pole(i)[1], curve_geometry.Pole(i)[2])
+    node.SetValue(NURBS_CONTROL_POINT_WEIGHT, curve_geometry.Weight(i))
+    node_indices.append(node.Id)
+    kratos_curve.SetNode(Index = i, Value = node)
 
 # Erzeugen der Kurve
 for i in range(curve_geometry.NbKnots):
@@ -78,7 +79,7 @@ shapes = an.CurveShapeEvaluator(Degree = curve_geometry.Degree, Order = 2)
 
 # Preprozessor Definitionen
 t0 = [1, 0, 0]                  # Manuelle Vorgabe des Tangentenvektors
-n0 = [0, 0, 1]                  # Manuelle Vorgabe des Normalenvektors
+n0 = [0, 0, -1]                  # Manuelle Vorgabe des Normalenvektors
 phi = 0                         # manuelle Vorgabe der Rotation
 phi_der = 0                     # manuelle Vorgabe der Rotation 1st Ableitung
 knots = curve_geometry.Knots
@@ -157,10 +158,10 @@ linear_solver = new_linear_solver_factory.ConstructSolver(Parameters(
 relative_tolerance = 1e-7
 absolute_tolerance = 1e-7
 conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
-conv_criteria.SetEchoLevel(2)
+conv_criteria.SetEchoLevel(1)
 
 # Löser
-maximum_iterations = 10 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
+maximum_iterations = 100 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
 compute_reactions = True
 reform_dofs_at_each_iteration = True
 move_mesh_flag = True
@@ -175,7 +176,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
     reform_dofs_at_each_iteration,
     move_mesh_flag
 )
-solver.SetEchoLevel(0)
+solver.SetEchoLevel(1)
 
 num_pole = curve_geometry.NbPoles
 num_load_steps = 10
@@ -188,7 +189,7 @@ disp_X = np.empty([num_load_steps+1, num_pole])
 disp_Y = np.empty([num_load_steps+1, num_pole])
 disp_Z = np.empty([num_load_steps+1, num_pole])
 
-for i in range(num_load_steps+1):
+for i in range(1, num_load_steps+1):
     F = i * 1/num_load_steps
     # node_2.SetSolutionStepValue(POINT_LOAD_Y, 1000 * (i + 1) / 10)
     model_part.GetNode(8).SetSolutionStepValue(POINT_LOAD_Z, F)

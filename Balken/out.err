@@ -1,11 +1,11 @@
-17:48:25 Warning in Dof::activate_BCDirichlet:
-17:48:25 DOF has already an activated Dirichlet BC.
-17:48:25 Old Dirichlet BC will be overwritten.
-17:48:25 Warning in Dof::activate_BCDirichlet:
-17:48:25 DOF has already an activated Dirichlet BC.
-17:48:25 Old Dirichlet BC will be overwritten.
-17:48:25 Warning in Dof::activate_BCDirichlet:
-17:48:25 DOF has already an activated Dirichlet BC.
-17:48:25 Old Dirichlet BC will be overwritten.
-17:48:28 Error in 'LoadCurve::compute_Factor'
-17:48:28 For curve with ID 1 requested time 2.000000 not specified!
+13:30:54 Warning in Dof::activate_BCDirichlet:
+13:30:54 DOF has already an activated Dirichlet BC.
+13:30:54 Old Dirichlet BC will be overwritten.
+13:30:54 Warning in Dof::activate_BCDirichlet:
+13:30:54 DOF has already an activated Dirichlet BC.
+13:30:54 Old Dirichlet BC will be overwritten.
+13:30:54 Warning in Dof::activate_BCDirichlet:
+13:30:54 DOF has already an activated Dirichlet BC.
+13:30:54 Old Dirichlet BC will be overwritten.
+13:31:05 Error in 'LoadCurve::compute_Factor'
+13:31:05 For curve with ID 1 requested time 10.000000 not specified!

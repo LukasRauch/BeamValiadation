@@ -11,7 +11,7 @@ PC-ANALYSIS 1: STA_GEO_NONLIN
   OUTPUT = PC-OUT 1
   COMPCASE = LD-COM 1
   DOMAIN = EL-DOMAIN 1
-  NUM_STEP = 2
+  NUM_STEP = 10
   MAX_ITER_EQUILIBRIUM = 100
   EQUILIBRIUM_ACCURACY = 1e-7
   CURVE = LD-CURVE 1
@@ -109,15 +109,19 @@ LD-COM 1
   TYPE=LD-NODE   4   FAC= -1.0
 !===================================================================
 LD-CURVE 1 TYPE=DISCRETE !global LDC
-  TIME = 0 VAL = 0.5
-  TIME = 1 VAL = 1.0
-  !TIME = 2 VAL = 1.0
-  !TIME = 2 VAL = 0.3
-  !TIME = 3 VAL = 0.4
-  !TIME = 4 VAL = 0.5
-  !TIME = 5 VAL = 0.6
-  !TIME = 6 VAL = 0.7
-  !TIME = 7 VAL = 0.8
-  !TIME = 8 VAL = 0.9
-  !TIME = 9 VAL = 1.0
+  TIME = 0 VAL = 0.1
+  TIME = 1 VAL = 0.2
+  TIME = 2 VAL = 0.3
+  TIME = 3 VAL = 0.4
+  TIME = 4 VAL = 0.5
+  TIME = 5 VAL = 0.6
+  TIME = 6 VAL = 0.7
+  TIME = 7 VAL = 0.8
+  TIME = 8 VAL = 0.9
+  TIME = 9 VAL = 1.0
+  
+  
+  !TIME = 10 VAL = 1.0
+  !TIME = 0 VAL = 0.5
+  !TIME = 1 VAL = 1.0
 

@@ -29,15 +29,16 @@ model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
 model_part.AddNodalSolutionStepVariable(POINT_LOAD) 
 
 # DEFINE ELEMENT PROPPERTIES
-element_propperties = model_part.GetProperties()[1]     # elementpropertie - ID '1'
-element_propperties.SetValue(CROSS_AREA         ,   100)
-element_propperties.SetValue(YOUNG_MODULUS      ,   1)
-element_propperties.SetValue(SHEAR_MODULUS      ,   1)
-element_propperties.SetValue(MOMENT_OF_INERTIA_Y,   1)
-element_propperties.SetValue(MOMENT_OF_INERTIA_Z,   1)
-element_propperties.SetValue(MOMENT_OF_INERTIA_T,   1)
-element_propperties.SetValue(POISSON_RATIO      ,   0)
-element_propperties.SetValue(DENSITY            ,   1)
+element_properties = model_part.GetProperties()[1]     # elementpropertie - ID '1'
+element_properties.SetValue(CROSS_AREA         ,   100)
+element_properties.SetValue(YOUNG_MODULUS      ,   1)
+element_properties.SetValue(SHEAR_MODULUS      ,   0.5)
+element_properties.SetValue(MOMENT_OF_INERTIA_Y,   100)
+element_properties.SetValue(MOMENT_OF_INERTIA_Z,   500)
+element_properties.SetValue(MOMENT_OF_INERTIA_T,   100)
+element_properties.SetValue(POISSON_RATIO      ,   0)
+element_properties.SetValue(DENSITY             ,   78.5)
+element_properties.SetValue(POISSON_RATIO       ,   0)
 
 # DEFINE CURVE 
 curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree , NumberOfNodes = curve_geometry.NbPoles )
@@ -79,7 +80,7 @@ for n, (t, weight) in enumerate(integration_points):
 # GENERATE ELEMENTS 
     point, tangent = curve.DerivativesAt(T=t, Order=1)
 
-    element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_propperties)
+    element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
     element.SetValue(INTEGRATION_WEIGHT                 , weight)
     element.SetValue(SHAPE_FUNCTION_VALUES              , n_0)
     element.SetValue(SHAPE_FUNCTION_LOCAL_DERIVATIVES   , n_der)
@@ -129,7 +130,7 @@ conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(1)
 
 # Solver Input
-maximum_iterations              = 0
+maximum_iterations              = 100
 compute_reactions               = True
 reform_dofs_at_each_iteration   = True
 move_mesh_flag                  = True
