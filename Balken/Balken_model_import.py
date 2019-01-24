@@ -34,11 +34,12 @@ model_part.AddNodalSolutionStepVariable(DISPLACEMENT_ROTATION)
 model_part.AddNodalSolutionStepVariable(REACTION)
 model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
 model_part.AddNodalSolutionStepVariable(POINT_LOAD)
+# model_part.AddNodalSolutionStepVariable(LOAD_VECTOR_MOMENT)
 
 # Querschnittswerte 
 a = 1       # Querschnittshöhe
 b = 1       # Querschnittsbreite
-A = a * b   # Querschnittsfäche
+A = a * b   # Querschnittsfläche
 Iy = (a * b^3)/12   # Flächenträgheitsmoment Iy
 Iz = (b * a^3)/12   # Flächenträgheitsmoment Iz
 
@@ -107,15 +108,60 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
 
     # Generierung der Elemente pro Integrationspunkt
     element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
-    element.SetValue(INTEGRATION_WEIGHT, weight)  # *2
-    element.SetValue(SHAPE_FUNCTION_VALUES, n_0)                # Typ Vektor
-    element.SetValue(SHAPE_FUNCTION_LOCAL_DERIVATIVES, n_der)   # Typ Matrix
-    element.SetValue(T0, tangent)
-
+    element.SetValue(INTEGRATION_WEIGHT                 , weight)  # *2
+    element.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
+    element.SetValue(SHAPE_FUNCTION_LOCAL_DERIVATIVES   , n_der)   # Typ Matrix
+    element.SetValue(T0                                 , tangent)
     ### manuelle Vorgabe
-    element.SetValue(N0, n0)
-    element.SetValue(PHI, phi)
-    element.SetValue(PHI_0_DER, phi_der)
+    element.SetValue(N0                                 , n0)
+    element.SetValue(PHI                                , phi)
+    element.SetValue(PHI_0_DER                          , phi_der)
+
+
+# Randbedingungen: Knotenlast
+load_properties = model_part.GetProperties()[2] # property-ID = 2
+#                             typ,                     Id,  Knoten                   , Eigenschaften
+model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(4).Id], load_properties)
+
+#_________________________________________________________________________________________________________________
+# Definition: Moment 
+moment_vec          = [0, 1, 0]
+moment_pos_para     = 10
+
+# Formfunktionen an Gausspunkt n
+n_0 = Vector(4)                                     # Pro Integrationspunkt 4 Formfunktionauswertungen
+n_der = Matrix(2,4)                                 # Pro Integrationspunkt 2 x 4 Ableitungen
+shapes.Compute(curve_geometry.Knots, moment_pos_para)
+
+for i in range(shapes.NbNonzeroPoles):
+    n_0[i] = shapes(0, i)
+    n_der[0,i] = shapes(1, i)
+    n_der[1,i] = shapes(2, i)
+
+# Tangentenvektor ausgewertet an Gausspunkt n
+# Normierung des Tangentenvektors erfolgt Kratos-intern
+point, tangent = kratos_curve.DerivativesAt(T=t, Order=1)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
+
+element_load_properties = model_part.GetProperties()[3] # property-id = 3
+# element_load_properties.SetValue(LOAD_VECTOR_MOMENT                 , moment_vec)
+# Generierung der Elemente pro Integrationspunkt
+load_condition_element = model_part.CreateNewElement('IgaBeamMomentCondition', 5, node_indices, element_load_properties)
+# element_load_properties.SetValue(LOAD_VECTOR_MOMENT                  , moment_vec)
+load_condition_element.SetValue(INTEGRATION_WEIGHT                  , 1)  # *2
+load_condition_element.SetValue(SHAPE_FUNCTION_VALUES               , n_0)                # Typ Vektor
+load_condition_element.SetValue(SHAPE_FUNCTION_LOCAL_DERIVATIVES    , n_der)   # Typ Matrix
+load_condition_element.SetValue(T0                                  , tangent)
+
+### manuelle Vorgabe
+load_condition_element.SetValue(N0, n0)
+load_condition_element.SetValue(PHI, phi)
+load_condition_element.SetValue(PHI_0_DER, phi_der)  
+
+# # # Randbedingungen: Knotenlast
+# load_properties = model_part.GetProperties()[2] # propperty-ID = 2
+# #                             typ,                     Id,  Knoten                   , Eigenschaften
+# model_part.CreateNewCondition('IgaBeamMomentCondition', 3, [model_part.GetNode(4).Id], element_load_properties)
+#_________________________________________________________________________________________________________________
 
 # Freiheitsgrade einfügen
 dof_node = 4
@@ -136,10 +182,8 @@ model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 model_part.GetNode(2).Fix(DISPLACEMENT_Y)
 model_part.GetNode(2).Fix(DISPLACEMENT_Z)
 
-# Randbedingungen: Knotenlast
-load_properties = model_part.GetProperties()[2] # propperty-ID = 2
-#                             typ,                     Id,  Knoten                   , Eigenschaften
-model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(4).Id], load_properties)
+model_part.GetNode(3).Fix(DISPLACEMENT_Y)
+model_part.GetNode(4).Fix(DISPLACEMENT_Y)
 
 # Löser konfigurieren
 model_part.SetBufferSize(1)
@@ -158,7 +202,7 @@ conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(1)
 
 # Löser
-maximum_iterations = 100
+maximum_iterations = 200
 compute_reactions = True
 reform_dofs_at_each_iteration = True
 move_mesh_flag = True
@@ -188,15 +232,17 @@ disp_Z = np.empty([num_load_steps, num_pole])
 
 for i in range(1, num_load_steps+1):
     F = i * 1/num_load_steps
-    # node_2.SetSolutionStepValue(POINT_LOAD_Y, 1000 * (i + 1) / 10)
+    moment_vec          = [0, i * 2/num_load_steps, 0]
     model_part.GetNode(4).SetSolutionStepValue(POINT_LOAD_Z, F)
+    # model_part.GetElement(5)
+    # element_load_properties.SetValue(LOAD_VECTOR_MOMENT, moment_vec)
 
     # aktuellen modellzustand kopieren
     model_part.CloneTimeStep(i+1)
 
     # aktuellen zustand lösen
     # print("solver step: ", i)
-    print("solver step: ", i, "F =", F)
+    print("\nsolver step: ", i, "F =", F)
     # print("Verhältnis F*L^2/EI= ", F/(element_properties.GetValue(YOUNG_MODULUS)*element_properties.GetValue(MOMENT_OF_INERTIA_Y) ))
     solver.Solve()
 
@@ -206,20 +252,19 @@ for i in range(1, num_load_steps+1):
         disp_Z[i-1,j] = (model_part.GetNode(j+1).Z )
     
 
-    print("Pole Nr. 1: ")
-    print("Verschiebung in X: " + str(model_part.GetNode(2).X - model_part.GetNode(2).X0))
-    # print("Pole Nr. 3: ")
-    # print("Verschiebung in X: " + str(model_part.GetNode(num_pole-1).X - model_part.GetNode(num_pole-1).X0))
-    # print("Verschiebung in Y: " + str(model_part.GetNode(num_pole-1).Y - model_part.GetNode(num_pole-1).Y0))
-    # print("Verschiebung in Z: " + str(model_part.GetNode(num_pole-1).Z - model_part.GetNode(num_pole-1).Z0))
-    print("Pole Nr. 4: ")
-    print("Verschiebung in X: " + str(model_part.GetNode(num_pole).X - model_part.GetNode(num_pole).X0))
-    print("Verschiebung in Y: " + str(model_part.GetNode(num_pole).Y - model_part.GetNode(num_pole).Y0))
-    print("Verschiebung in Z: " + str(model_part.GetNode(num_pole).Z - model_part.GetNode(num_pole).Z0))
+
+    print("\nDOF-TYPE" + "\t" + "X" + "\t\t\t" +  "Y" + "\t\t\t" + "Z")
+    print("# Nr. =============================================================================")
+
+    for k in range(curve_geometry.NbPoles):
+        print("Pole "+ str(k+1) + "\t\t"  
+                    + '%.12f' % (model_part.GetNode(k+1).X - model_part.GetNode(k+1).X0) +  "\t\t"
+                    + '%.12f' % (model_part.GetNode(k+1).Y - model_part.GetNode(k+1).Y0) +  "\t\t" 
+                    + '%.12f' % (model_part.GetNode(k+1).Z - model_part.GetNode(k+1).Z0) +  "\t\t" )
+    
 
 
-
-print("Prozes time:  %s seconds ---" % (time.time() - start_time))
+print("\nProzes time:  %s seconds ---" % (time.time() - start_time))
 print('done!')
 
 Path = mpath.Path
