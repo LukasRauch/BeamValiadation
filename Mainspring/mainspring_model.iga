@@ -1,0 +1,16 @@
+[
+  {
+    "Key": "Rhino<dcb53a7d-1009-4add-84a5-662ee7a8e85b>.CurveGeometry3D",
+    "Type": "CurveGeometry3D",
+    "Degree": 4,
+    "Knots": [0.0,0.0,0.0,0.0,1.0,2.0,2.0,2.0,2.0],
+    "NbPoles": 6,
+    "Poles": [[0.0,0.0,0.0],[1.2499999999999902,0.0,0.0],[3.7500000000000338,0.0,0.0],[6.2499999999999751,0.0,0.0],[8.750000000000016,0.0,0.0],[10.0,0.0,0.0]]
+  },
+  {
+    "Key": "Rhino<dcb53a7d-1009-4add-84a5-662ee7a8e85b>",
+    "Type": "Curve3D",
+    "Geometry": "Rhino<dcb53a7d-1009-4add-84a5-662ee7a8e85b>.CurveGeometry3D",
+    "Domain": [0.0,2.0]
+  }
+]

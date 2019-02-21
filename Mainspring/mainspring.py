@@ -16,7 +16,8 @@ import numpy as np
 from geomdl import BSpline
 from geomdl import utilities
 from geomdl import exchange
-# from geomdl import Multi
+from geomdl import Multi
+
 from geomdl.visualization import VisMPL
 
 start_time = time.time()
@@ -24,7 +25,7 @@ start_time = time.time()
 print('Process ID: ', os.getpid())
 print(' ')
 
-model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Balken8\Balken8.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Mainspring\mainspring_model.iga')
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
@@ -46,7 +47,7 @@ element_properties.SetValue(CROSS_AREA          , 1000)      # m²
 element_properties.SetValue(YOUNG_MODULUS       , 1)      # kN/m²
 element_properties.SetValue(SHEAR_MODULUS       , 0.5)      # kN/m²
 element_properties.SetValue(MOMENT_OF_INERTIA_Y , 100)      # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , 500)      # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 50000)      # m4
 element_properties.SetValue(MOMENT_OF_INERTIA_T , 100)      # m4
 element_properties.SetValue(POISSON_RATIO       , 0)                # m4
 element_properties.SetValue(DENSITY             , 78.5)
@@ -119,18 +120,18 @@ for n, (t, weight) in enumerate(integration_points):    # 11 Integrationspunkte
     # Randbedingungen: Knotenlast
 load_properties = model_part.GetProperties()[2] # propperty-ID = 2
 #                             typ,                     Id,  Knoten                   , Eigenschaften
-model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(8).Id], load_properties)
+model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(curve_geometry.NbPoles).Id], load_properties)
 
-#_________________________________________________________________________________________________________________
+# #_________________________________________________________________________________________________________________
 # Definition: Moment 
 moment_vec          = [0, 1, 0]
-moment_pos_para     = 10
+moment_pos_para     = 1
 
 # Formfunktionen an t 
-n_0 = Vector(4)                                     # Pro Integrationspunkt 4 Formfunktionauswertungen
-n_1 = Vector(4)                                     # Pro Integrationspunkt 4 Formfunktionauswertungen
-n_2 = Vector(4)                                     # Pro Integrationspunkt 4 Formfunktionauswertungen
-n_3 = Vector(4)                                     # Pro Integrationspunkt 4 Formfunktionauswertungen
+n_0 = [0] * shapes.NbNonzeroPoles
+n_1 = [0] * shapes.NbNonzeroPoles
+n_2 = [0] * shapes.NbNonzeroPoles
+n_3 = [0] * shapes.NbNonzeroPoles
 # n_der = Matrix(2,4)                                 # Pro Integrationspunkt 2 x 4 Ableitungen
 shapes.Compute(curve_geometry.Knots, moment_pos_para)
 
@@ -165,7 +166,7 @@ load_condition_element.SetValue(T0                                 , tangent)
 load_condition_element.SetValue(N0, n0)
 load_condition_element.SetValue(PHI, phi)
 load_condition_element.SetValue(PHI_0_DER, phi_der)  
-# #_________________________________________________________________________________________________________________
+# # #_________________________________________________________________________________________________________________
 # # 
 # # Freiheitsgrade einfügen
 dof_node = 4
@@ -188,9 +189,9 @@ model_part.GetNode(2).Fix(DISPLACEMENT_Z)
 model_part.GetNode(3).Fix(DISPLACEMENT_Y)
 model_part.GetNode(4).Fix(DISPLACEMENT_Y)
 model_part.GetNode(5).Fix(DISPLACEMENT_Y)
-model_part.GetNode(6).Fix(DISPLACEMENT_Y)
-model_part.GetNode(7).Fix(DISPLACEMENT_Y)
-model_part.GetNode(8).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(6).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(7).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(8).Fix(DISPLACEMENT_Y)
 
 # Löser konfigurieren
 model_part.SetBufferSize(1)
@@ -203,8 +204,8 @@ linear_solver = new_linear_solver_factory.ConstructSolver(Parameters(
     r'{"solver_type": "eigen_sparse_lu"}'))
 
 # Abbruchkriterium
-relative_tolerance = 1e-7
-absolute_tolerance = 1e-7
+relative_tolerance = 1e-4
+absolute_tolerance = 1e-4
 conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(1)
 
@@ -227,7 +228,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
 solver.SetEchoLevel(1)
 
 num_pole = curve_geometry.NbPoles
-num_load_steps = 15
+num_load_steps = 1
 
 disp_X = []
 disp_Y = []
@@ -238,12 +239,12 @@ disp_Y = np.empty([num_load_steps+1, num_pole])
 disp_Z = np.empty([num_load_steps+1, num_pole])
 
 for i in range(1, num_load_steps+1):
-    F = i * 20/num_load_steps
-    moment_vec          = [0, i * 5/num_load_steps, 0]
+    F = i * 10/num_load_steps
+    moment_vec          = [0, i * 10/num_load_steps, 0]
 
-    model_part.GetNode(8).SetSolutionStepValue(POINT_LOAD_Z, F)
-    # model_part.GetElement(n+2)
-    # element_load_properties.SetValue(LOAD_VECTOR_MOMENT, moment_vec)
+    # model_part.GetNode(curve_geometry.NbPoles).SetSolutionStepValue(POINT_LOAD_Z, F)
+    model_part.GetElement(n+2)
+    element_load_properties.SetValue(LOAD_VECTOR_MOMENT, moment_vec)
     
     # aktuellen modellzustand kopieren
     model_part.CloneTimeStep(i+1)
@@ -271,10 +272,6 @@ print("Prozes time:  %s seconds ---" % (time.time() - start_time))
 print('Calculations done!')
 
 
-
-
-
-
 # Fix file path
 # os.chdir(os.path.dirname(os.path.realpath(__file__)))
 multi_curve = Multi.MultiCurve()
@@ -282,19 +279,56 @@ multi_curve = Multi.MultiCurve()
 # Set up the Curve
 for n in range(num_load_steps):
     curve = BSpline.Curve()
-    curve.degree = 3
+    curve.degree = curve_geometry.Degree
 
     curve.ctrlpts =[(disp_X[n,0], -disp_Z[n,0]),
                     (disp_X[n,1], -disp_Z[n,1]),
                     (disp_X[n,2], -disp_Z[n,2]),
                     (disp_X[n,3], -disp_Z[n,3]),
                     (disp_X[n,4], -disp_Z[n,4]),
-                    (disp_X[n,5], -disp_Z[n,5]),
-                    (disp_X[n,6], -disp_Z[n,6]),
-                    (disp_X[n,7], -disp_Z[n,7]),]
-    curve.knotvector = (0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 5.0, 5.0)
+                    (disp_X[n,5], -disp_Z[n,5])]
+                    # (disp_X[n,6], -disp_Z[n,6]),
+                    # (disp_X[n,7], -disp_Z[n,7]),]
+    curve.knotvector = (0.0,0.0,0.0,0.0,0.0,1.0,2.0,2.0,2.0,2.0,2.0)
 
     multi_curve.add(curve)
+
+# curve0 = BSpline.Curve()
+# curve1 = BSpline.Curve()
+# curve2 = BSpline.Curve()
+# curve0.degree = 3
+# curve1.degree = 3
+# curve2.degree = 3
+
+# curve0.ctrlpts =[(disp_X[0,0], -disp_Z[0,0]),
+#                 (disp_X[0,1], -disp_Z[0,1]),
+#                 (disp_X[0,2], -disp_Z[0,2]),
+#                 (disp_X[0,3], -disp_Z[0,3]),
+#                 (disp_X[0,4], -disp_Z[0,4]),
+#                 (disp_X[0,5], -disp_Z[0,5]),
+#                 (disp_X[0,6], -disp_Z[0,6]),
+#                 (disp_X[0,7], -disp_Z[0,7]),]
+# curve0.knotvector = (0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 5.0, 5.0)
+# curve1.ctrlpts =[(disp_X[1,0], -disp_Z[1,0]),
+#                 (disp_X[1,1], -disp_Z[1,1]),
+#                 (disp_X[1,2], -disp_Z[1,2]),
+#                 (disp_X[1,3], -disp_Z[1,3]),
+#                 (disp_X[1,4], -disp_Z[1,4]),
+#                 (disp_X[1,5], -disp_Z[1,5]),
+#                 (disp_X[1,6], -disp_Z[1,6]),
+#                 (disp_X[1,7], -disp_Z[1,7]),]
+# curve1.knotvector = (0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 5.0, 5.0)
+# curve2.ctrlpts =[(disp_X[2,0], -disp_Z[2,0]),
+#                 (disp_X[2,1], -disp_Z[2,1]),
+#                 (disp_X[2,2], -disp_Z[2,2]),
+#                 (disp_X[2,3], -disp_Z[2,3]),
+#                 (disp_X[2,4], -disp_Z[2,4]),
+#                 (disp_X[2,5], -disp_Z[2,5]),
+#                 (disp_X[2,6], -disp_Z[2,6]),
+#                 (disp_X[2,7], -disp_Z[2,7]),]
+# curve2.knotvector = (0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 5.0, 5.0)
+
+# multi_curve_x = Multi.MultiCurve(curve0, curve1, curve2)
 
 multi_curve.delta = 0.05
 vis_config = VisMPL.VisConfig(legend=False)

@@ -106,7 +106,7 @@ LD-COM 1
   TYPE=BC-DIRICHLET   1
   TYPE=BC-DIRICHLET   2
   TYPE=BC-DIRICHLET   3
-  TYPE=LD-NODE   4   FAC= -1.0
+  TYPE=LD-NODE   4   FAC= -10.0
 !===================================================================
 LD-CURVE 1 TYPE=DISCRETE !global LDC
   TIME = 0 VAL = 0.1
