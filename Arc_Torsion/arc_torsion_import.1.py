@@ -123,14 +123,23 @@ for n, (t, weight) in enumerate(integration_points):    # 11 Integrationspunkte
     theta_1 = tau
 
     A1 = r_1
-    A3 = (-(  N * np.cos(theta) + B * np.sin(theta))).tolist()
-    A2 = ( -N * np.sin(theta) + B * np.cos(theta)).tolist()
+    A2 = (  N * np.cos(theta) + B * np.sin(theta)).tolist()         # check sollte so weit funktionieren    
+    A3 = ( -N * np.sin(theta) + B * np.cos(theta)).tolist()         # check sollte so weit funktionieren
 
     A1_1 = r_2
     A2_1 =(- ( + N_1 * np.cos(theta) - N * np.sin(theta) * theta_1
                + B_1 * np.sin(theta) + B * np.cos(theta) * theta_1)).tolist()
     A3_1 =   ( - N_1 * np.sin(theta) - N * np.cos(theta) * theta_1
                 + B_1 * np.cos(theta) - B * np.sin(theta) * theta_1).tolist()
+
+    A = np.linalg.norm(A1)
+    
+    # A3   = [0, 0,-1]
+    A3_1 = (np.cross(A2, T_1) + np.cross(A2_1, T) ).tolist()           # achtung Zirkelbezug Aber irgendiwe rechnet es was 
+    # A2   = (np.cross(A1 / np.linalg.norm(A1), A3)).tolist()
+    A2_1 = (np.cross(A3, T_1) + np.cross(A3_1, T) ).tolist()
+    T_1  = A1_1 / A - np.dot(A1,A1_1) * A1 / A**3
+
 
 
     n_0 = [0] * shapes.NbNonzeroPoles
@@ -157,8 +166,8 @@ for n, (t, weight) in enumerate(integration_points):    # 11 Integrationspunkte
     point, tangent = kratos_curve.DerivativesAt(T=t, Order=1)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
 
     # Generierung der Elemente pro Integrationspunkt
-    element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
-    # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
+    # element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
+    element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
     element.SetValue(INTEGRATION_WEIGHT, weight)
     element.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
     element.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
@@ -272,7 +281,7 @@ conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
 conv_criteria.SetEchoLevel(1)
 
 # Löser
-maximum_iterations = 1 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
+maximum_iterations = 100 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
 compute_reactions = True
 reform_dofs_at_each_iteration = True
 move_mesh_flag = True
@@ -290,7 +299,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
 solver.SetEchoLevel(1)
 
 num_pole = curve_geometry.NbPoles
-num_load_steps = 5
+num_load_steps = 20
 
 disp_X = []
 disp_Y = []
@@ -305,7 +314,7 @@ multi_curve = Multi.MultiCurve()
 
 
 for i in range(0, num_load_steps+1):
-    F           = i * 0.05/num_load_steps
+    F           = i * 5/num_load_steps
     moment_vec  = [i * 10/num_load_steps ,0 , 0]
 
     model_part.GetNode(curve_geometry.NbPoles).SetSolutionStepValue(POINT_LOAD_Z, F)

@@ -1,27 +1,7 @@
-# Module Importieren
-from KratosMultiphysics import *
-from KratosMultiphysics.IgaApplication import *
-from KratosMultiphysics.StructuralMechanicsApplication import *
-import new_linear_solver_factory
-import os
-import yaml
-import json
-import time
-import ANurbs as an
-import numpy as np
-import matplotlib as mpl
-import matplotlib.path as mpath
-import matplotlib.patches as mpatches
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from geomdl import BSpline
-from geomdl import utilities
-from geomdl import exchange
-from geomdl import operations
-from geomdl import Multi
-from geomdl.visualization import VisMPL
-
-
+# import the beam model functions
+import sys 
+sys.path.append('C:/_Masterarbeit/bibliotheken/KratosBeamModel')
+from KratosBeamModel import * 
 
 
 start_time = time.time()
@@ -36,15 +16,16 @@ curve = curve_item.data
 curve_geometry = curve_item.geometry().geometry
 
 #Modell Erzeugen
-model_part = ModelPart('Model')
+# model_part = ModelPart('Model')
 
 # variablen definieren die jeder knoten speichern soll
-model_part.AddNodalSolutionStepVariable(DISPLACEMENT)
-model_part.AddNodalSolutionStepVariable(DISPLACEMENT_ROTATION)
-model_part.AddNodalSolutionStepVariable(REACTION)
-model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
-model_part.AddNodalSolutionStepVariable(POINT_LOAD)
+# model_part.AddNodalSolutionStepVariable(DISPLACEMENT)
+# model_part.AddNodalSolutionStepVariable(DISPLACEMENT_ROTATION)
+# model_part.AddNodalSolutionStepVariable(REACTION)
+# model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
+# model_part.AddNodalSolutionStepVariable(POINT_LOAD)
 # model_part.AddNodalSolutionStepVariable(LOAD_VECTOR_MOMENT)
+model_part = AddBeamDOFs()
 
 # Querschnittswerte
 a = 1       # Querschnittshöhe
@@ -105,6 +86,8 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
     A3 = Vector(3) 
     A3_1 = Vector(3) 
 
+    point, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = t , Order = 3)
+
     # Formfunktionen an Gausspunkt n
     n_0 = Vector(4)                                     
     n_1 = Vector(4)                                     
@@ -139,6 +122,7 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
     element.SetValue(PHI                                , phi)
     element.SetValue(PHI_DER_1                          , phi_der)
 
+# element = CreateNewElement(n+1, 'IgaBeamElement', node_indices, element_properties, t, weight)
 
 # Randbedingungen: Knotenlast
 load_properties = model_part.GetProperties()[2] # property-ID = 2
