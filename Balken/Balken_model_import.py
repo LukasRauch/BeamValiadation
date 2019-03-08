@@ -72,7 +72,7 @@ integration_points = curve_item.IntegrationPoints()
 shapes = an.CurveShapeEvaluator(Degree = curve_geometry.Degree, Order = 3)
 
 # Preprocessor Definitionen
-n0 = [0, 0, -1]                  # Manuelle Vorgabe des Normalenvektors
+n0 = [0, 0, 1]                  # Manuelle Vorgabe des Normalenvektors
 phi = 0                         # manuelle Vorgabe der Rotation
 phi_der = 0                     # manuelle Vorgabe der Rotation 1st Ableitung
 knots = curve_geometry.Knots
@@ -116,7 +116,7 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
     element.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
     element.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
     element.SetValue(T0                                 , tangent)
-    element.SetValue(T0_DER                                 , [0,0,0])
+    element.SetValue(T0_DER                             , [0,0,0])
     ### manuelle Vorgabe
     element.SetValue(N0                                 , n0)
     element.SetValue(PHI                                , phi)
@@ -130,7 +130,7 @@ load_properties = model_part.GetProperties()[2] # property-ID = 2
 model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(4).Id], load_properties)
 
 
-# # _________________________________________________________________________________________________________________
+# # # _________________________________________________________________________________________________________________
 # # Definition: Bettung
 position_t = 0
 
@@ -173,7 +173,7 @@ element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
 element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
 element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
 
-# # #_________________________________________________________________________________________________________________
+# # # #_________________________________________________________________________________________________________________
 
 # Freiheitsgrade einfügen
 dof_node = 4
@@ -183,13 +183,13 @@ VariableUtils().AddDof(DISPLACEMENT_Z, REACTION_Z, model_part)
 VariableUtils().AddDof(DISPLACEMENT_ROTATION, REACTION_ROTATION, model_part)
 
 # Randbedingungen: Auflager
-# Kontrollpunkt 1
+# # Kontrollpunkt 1
 # model_part.GetNode(1).Fix(DISPLACEMENT_X)
 # model_part.GetNode(1).Fix(DISPLACEMENT_Y)
 # model_part.GetNode(1).Fix(DISPLACEMENT_Z)
 # model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
-# model_part.GetNode(2).Fix(DISPLACEMENT_X)
+# # model_part.GetNode(2).Fix(DISPLACEMENT_X)
 # model_part.GetNode(2).Fix(DISPLACEMENT_Y)
 # model_part.GetNode(2).Fix(DISPLACEMENT_Z)
 # model_part.GetNode(2).Fix(DISPLACEMENT_ROTATION)
@@ -332,7 +332,6 @@ multi_curve.delta = 0.001
 vis_comp = VisMPL.VisCurve3D()
 multi_curve.vis = vis_comp
 multi_curve.render(cpcolor='black', evalcolor='red') 
-pass
 
 
 
