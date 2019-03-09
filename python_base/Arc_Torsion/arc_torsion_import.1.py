@@ -100,10 +100,10 @@ element_count = 0
 def calculate_tau(var_t):
     """returns tau depending on the parameter t"""
     point, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = var_t , Order = 3)
-    a = np.cross(r_1,r_2)   
-    d = np.dot(np.cross(r_1, r_2), r_3) 
-    delta = np.linalg.norm(r_1)             
-    alpha = np.linalg.norm(a)               
+    a = np.cross(r_1,r_2)
+    d = np.dot(np.cross(r_1, r_2), r_3)
+    delta = np.linalg.norm(r_1)
+    alpha = np.linalg.norm(a)
     kappa = alpha / (delta **(3))
     tau   = d / (alpha ** 2)
     return tau
@@ -111,9 +111,9 @@ def calculate_tau(var_t):
 def calculate_delta(var_t):
     """returns delta depending on the parameter t"""
     point, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = var_t , Order = 3)
-    a = np.cross(r_1,r_2)   
-    d = np.dot(np.cross(r_1, r_2), r_3) 
-    delta = np.linalg.norm(r_1)             
+    a = np.cross(r_1,r_2)
+    d = np.dot(np.cross(r_1, r_2), r_3)
+    delta = np.linalg.norm(r_1)
     return delta
 
 function = lambda var_t: calculate_tau(var_t) * calculate_delta(var_t)
@@ -133,19 +133,19 @@ for n, (t, weight) in enumerate(integration_points):    # 11 Integrationspunkte
     theta_0 = 0*np.pi/180
     point, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = t , Order = 3)
 
-    def base_vector(): 
+    def base_vector():
         tol = 1e-10
         a = np.cross(r_1,r_2)
-        a_1 = cross_1(r_1, r_2, r_2, r_3)                
-        d = np.dot(a, r_3)     
-        delta = np.linalg.norm(r_1)             
-        alpha = np.linalg.norm(a)  
-        if delta >= tol:             
+        a_1 = cross_1(r_1, r_2, r_2, r_3)
+        d = np.dot(a, r_3)
+        delta = np.linalg.norm(r_1)
+        alpha = np.linalg.norm(a)
+        if delta >= tol:
             kappa = alpha / (delta **(3))
             tau   = d / (alpha ** 2)
             # tau   = np.linalg.det([r_1,r_2,r_3]) / alpha**2
 
-            T = r_1 / delta     # Tangente A1 
+            T = r_1 / delta     # Tangente A1
             B = a / alpha       # Transversale A3
             N = np.cross(B, T)  # Normale A2
 
@@ -157,25 +157,25 @@ for n, (t, weight) in enumerate(integration_points):    # 11 Integrationspunkte
 
             def func(t):
                 _, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = t , Order = 3)
-                a = np.cross(r_1, r_2)   
+                a = np.cross(r_1, r_2)
                 d = np.dot(a, r_3)
-                delta = np.linalg.norm(r_1)             
-                alpha = np.linalg.norm(a)               
+                delta = np.linalg.norm(r_1)
+                alpha = np.linalg.norm(a)
                 tau = d / alpha**2
                 return -tau * delta
 
-            # theta = theta_0 +  tau * delta * weight 
-            # theta_1 =  tau * delta 
+            # theta = theta_0 +  tau * delta * weight
+            # theta_1 =  tau * delta
             theta   = theta_0 + integrate.romberg(func, 0, t)
             theta_1 = tau * delta
 
             A1 = r_1
             A1_1 = r_2
 
-            A2 = (  N * np.cos(theta) + B * np.sin(theta)).tolist()         # check sollte so weit funktionieren    
+            A2 = (  N * np.cos(theta) + B * np.sin(theta)).tolist()         # check sollte so weit funktionieren
             A2_1 = ( ( + N_1 * np.cos(theta) - N * np.sin(theta) * theta_1
                     + B_1 * np.sin(theta) + B * np.cos(theta) * theta_1)).tolist()
-            
+
             A3 = ( -N * np.sin(theta) + B * np.cos(theta)).tolist()         # check sollte so weit funktionieren
             A3_1 =   ( - N_1 * np.sin(theta) - N * np.cos(theta) * theta_1
                         + B_1 * np.cos(theta) - B * np.sin(theta) * theta_1).tolist()
@@ -202,7 +202,7 @@ for n, (t, weight) in enumerate(integration_points):    # 11 Integrationspunkte
     node_indices = [kratos_curve.Node(j).Id for j in
         range(shapes.FirstNonzeroPole, shapes.LastNonzeroPole + 1)]
 
-    # node_indices = kratos_curve.Node(j).Id for j in 
+    # node_indices = kratos_curve.Node(j).Id for j in
 
     for i in range(shapes.NbNonzeroPoles):
         n_0[i] = shapes(0, i)
@@ -242,11 +242,11 @@ position_t = 0
 
 
 # Formfunktionen an Gausspunkt n
-n_0 = Vector(4)                                     
-n_1 = Vector(4)                                     
-n_2 = Vector(4)                                     
-n_3 = Vector(4)                                     
-# n_der = Matrix(2,4)                                 
+n_0 = Vector(4)
+n_1 = Vector(4)
+n_2 = Vector(4)
+n_3 = Vector(4)
+# n_der = Matrix(2,4)
 shapes.Compute(curve_geometry.Knots, position_t)
 node_indices = np.arange(shapes.FirstNonzeroPole+1, shapes.LastNonzeroPole+2, dtype=int)
 
@@ -265,33 +265,33 @@ for i in range(shapes.NbNonzeroPoles):
 # Normierung des Tangentenvektors erfolgt Kratos-intern
 point, r_1, r_2 = kratos_curve.DerivativesAt(T=position_t, Order=2)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
 
-# Generierung der Elemente pro Integrationspunkt
-# element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
-# element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
-# element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
-# element_dirichlet_condition.SetValue(T0                                 , r_1)
-# element_dirichlet_condition.SetValue(T0_DER                             , r_2)
+# # Generierung der Elemente pro Integrationspunkt
+# # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
+element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
+element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
+element_dirichlet_condition.SetValue(T0                                 , r_1)
+element_dirichlet_condition.SetValue(T0_DER                             , r_2)
 
-# element_dirichlet_condition.SetValue(BASE_A1                            , A1)
-# element_dirichlet_condition.SetValue(BASE_A2                            , A2)
-# element_dirichlet_condition.SetValue(BASE_A3                            , A3)
-# element_dirichlet_condition.SetValue(BASE_A1_1                          , A1_1)
-# element_dirichlet_condition.SetValue(BASE_A2_1                          , A2_1)
-# element_dirichlet_condition.SetValue(BASE_A3_1                          , A3_1)
+element_dirichlet_condition.SetValue(BASE_A1                            , A1)
+element_dirichlet_condition.SetValue(BASE_A2                            , A2)
+element_dirichlet_condition.SetValue(BASE_A3                            , A3)
+element_dirichlet_condition.SetValue(BASE_A1_1                          , A1_1)
+element_dirichlet_condition.SetValue(BASE_A2_1                          , A2_1)
+element_dirichlet_condition.SetValue(BASE_A3_1                          , A3_1)
 
-# ### manuelle Vorgabe
-# element_dirichlet_condition.SetValue(N0                                 , n0)
-# element_dirichlet_condition.SetValue(PHI                                , phi)
-# element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
-# ### Randbedingungen 
-# element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
-# element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
-# element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
-# element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
+### manuelle Vorgabe
+element_dirichlet_condition.SetValue(N0                                 , n0)
+element_dirichlet_condition.SetValue(PHI                                , phi)
+element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
+### Randbedingungen
+element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
+element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
+element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
+element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
 # # # # # _________________________________________________________________________________________________________________
 # Freiheitsgrade einfügen
 dof_node = 4
@@ -301,16 +301,16 @@ VariableUtils().AddDof(DISPLACEMENT_Z, REACTION_Z, model_part)
 VariableUtils().AddDof(DISPLACEMENT_ROTATION, REACTION_ROTATION, model_part)
 
 # Randbedingungen: Auflager
-# Kontrollpunkt 1
-model_part.GetNode(1).Fix(DISPLACEMENT_X)
-model_part.GetNode(1).Fix(DISPLACEMENT_Y)
-model_part.GetNode(1).Fix(DISPLACEMENT_Z)
-model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
-
-# # model_part.GetNode(2).Fix(DISPLACEMENT_X)
-model_part.GetNode(2).Fix(DISPLACEMENT_Y)
-model_part.GetNode(2).Fix(DISPLACEMENT_Z)
+# # Kontrollpunkt 1
+# model_part.GetNode(1).Fix(DISPLACEMENT_X)
+# model_part.GetNode(1).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(1).Fix(DISPLACEMENT_Z)
 # model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
+
+# # # model_part.GetNode(2).Fix(DISPLACEMENT_X)
+# model_part.GetNode(2).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(2).Fix(DISPLACEMENT_Z)
+# # model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
 
 
@@ -370,7 +370,7 @@ for i in range(0, num_load_steps+1):
     model_part.GetNode(curve_geometry.NbPoles).SetSolutionStepValue(POINT_LOAD_Z, F)
     # model_part.GetElement(n+2)
     # element_load_properties.SetValue(LOAD_VECTOR_MOMENT, moment_vec)
-    
+
     # aktuellen modellzustand kopieren
     model_part.CloneTimeStep(i+1)
 
@@ -407,9 +407,9 @@ for i in range(0, num_load_steps+1):
     ctlpts_list = open("C:\_Masterarbeit\BeamValidation\python_base\Balken\ctlpts_list.txt", "w")
 
     # # Draw the control points polygon, the 3D curve and the vectors
-    # fig = plt.figure('figure X', figsize=(10.67, 8), dpi= 96) 
+    # fig = plt.figure('figure X', figsize=(10.67, 8), dpi= 96)
     # ax = Axes3D(fig)
-    
+
     for j in range(curve_geometry.NbPoles):
         data = model_part.GetNode(j+1).X , model_part.GetNode(j+1).Y , model_part.GetNode(j+1).Z
         ctlpts_list.write(str(model_part.GetNode(j+1).X ) + ',' +
@@ -419,20 +419,20 @@ for i in range(0, num_load_steps+1):
     ctlpts_list.close()
     plot_curve.ctrlpts = exchange.import_txt("C:\_Masterarbeit\BeamValidation\python_base\Balken\ctlpts_list.txt")
     plot_curve.knotvector = utilities.generate_knot_vector(plot_curve.degree, len(plot_curve.ctrlpts))
-    # Set evaluation delta 
+    # Set evaluation delta
     # plot_curve.delta = 0.001
-    # plot_curve.evaluate 
+    # plot_curve.evaluate
 
     # add to mulit_curve
     multi_curve.add(plot_curve)
-    
-# Set evaluation delta 
+
+# Set evaluation delta
 multi_curve.delta = 0.001
 # multi_curve.evaluate
 # plot the controlpoint polygon and the evaluated curve
 vis_comp = VisMPL.VisCurve3D()
 multi_curve.vis = vis_comp
 multi_curve
-multi_curve.render(cpcolor='black', evalcolor='red') 
+multi_curve.render(cpcolor='black', evalcolor='red')
 # multi_curve.render()
 pass

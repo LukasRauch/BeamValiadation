@@ -87,6 +87,9 @@ class Model:
 
         self.geometry = geometry
 
+        self.penalty = []
+        self.penalty_key = {}
+
     def add_node(self, key, location):
         node_id = len(self.nodes) + 1
         node = self.model_part.CreateNewNode(node_id, *location)
@@ -270,18 +273,8 @@ class Beam:
 
     def frame_at(self, t):
         curve_geometry = self.curve_geometry
-
-        # FIXME: für gekrümmte curven -> minimal rotation frame
-
         p, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t, order = 3)
 
-        # a2 = np.array([0, 1, 0])
-        # a2_1 = np.array([0, 0, 0])
-
-        # a3 = np.array([0, 0, 1])
-        # a3_1 = np.array([0, 0, 0])
-
-        # return p, r_1, r_2, a2, a2_1, a3, a3_1
         tol = 1e-10
         a = np.cross(r_1,r_2)
         a_1 = cross_1(r_1, r_2, r_2, r_3)
@@ -306,16 +299,16 @@ class Beam:
             a1 = r_1
             a1_1 = r_2
 
-            a2 = (  N * np.cos(theta) + B * np.sin(theta))         # check
+            a2 = (  N * np.cos(theta) + B * np.sin(theta))        
             a2_1 = ( ( + N_1 * np.cos(theta) - N * np.sin(theta) * theta_1
                     + B_1 * np.sin(theta) + B * np.cos(theta) * theta_1))
 
-            a3 = ( -N * np.sin(theta) + B * np.cos(theta))         # check
+            a3 = ( -N * np.sin(theta) + B * np.cos(theta))        
             a3_1 =   ( - N_1 * np.sin(theta) - N * np.cos(theta) * theta_1
                         + B_1 * np.cos(theta) - B * np.sin(theta) * theta_1)
             pass
         else:   # Fall: Gerader Stab:: Krümmung = inf
-            T = r_1 / delta     # Tangente a1
+            T = r_1 / delta    
             a1 = r_1
             a1_1 = r_2
             if np.array_equal(T,[0,0,1]):
@@ -329,6 +322,76 @@ class Beam:
         a3_1 = np.array([0,0,0])
 
         return p, a1, a1_1, a2, a2_1, a3, a3_1
+
+    # def fix_node(self, index, directions):
+    #     node = self.nodes[index]
+
+    #     if 'x' in directions:
+    #         node.Fix(DISPLACEMENT_X)
+    #     if 'y' in directions:
+    #         node.Fix(DISPLACEMENT_Y)
+    #     if 'z' in directions:
+    #         node.Fix(DISPLACEMENT_Z)
+    #     if 'rotation' in directions:
+    #         node.Fix(DISPLACEMENT_ROTATION)
+
+    # def add_support(self, t, penalty):
+    # pass
+
+    def add_support(self, t, penalty, material):
+        # if not isinstance(property, Properties):
+        material = self.model.property(material)
+
+        curve_geometry = self.curve_geometry
+        model_part = self.model_part
+
+        integration_degree = curve_geometry.Degree() + 1
+
+
+        nonzero_node_indices, shape_functions = curve_geometry.ShapeFunctionsAt(t, order=3)
+
+        nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
+
+        condition = self.model.add_element('IgaBeamWeakDirichletCondition', nonzero_nodes, material)
+        
+        condition.SetValue(INTEGRATION_WEIGHT, 1)     # FIXME: integration_weight von der Kratoskurve beziehen.
+
+        condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
+
+        _, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+
+        condition.SetValue(BASE_A1, A1.tolist())
+        condition.SetValue(BASE_A2, A2.tolist())
+        condition.SetValue(BASE_A3, A3.tolist())
+        condition.SetValue(BASE_A1_1, A1_1.tolist())
+        condition.SetValue(BASE_A2_1, A2_1.tolist())
+        condition.SetValue(BASE_A3_1, A3_1.tolist())
+
+        DISPLACEMENT = 0    # default
+        TORSION = 0         # default
+        ROTATION = 0        # default
+
+        if 'displacement' in penalty:
+            DISPLACEMENT = penalty["displacement"]
+        if 'disp' in penalty:
+            DISPLACEMENT = penalty["disp"]
+        if 'torsion' in penalty:
+            TORSION = penalty["torsion"]
+        if 'tors' in penalty:
+            TORSION = penalty["tors"]
+        if 'rotation' in penalty:
+            ROTATION = penalty["rotation"]
+        if 'rot' in penalty:
+            ROTATION = penalty["rot"]
+
+        condition.SetValue(PENALTY_DISPLACEMENT, DISPLACEMENT)
+        condition.SetValue(PENALTY_TORSION, TORSION)
+        condition.SetValue(PENALTY_ROTATION, ROTATION)
+    
+
 
 
     def add_stiffness(self, material):
@@ -376,8 +439,7 @@ class Beam:
             element.SetValue(BASE_A2_1, A2_1.tolist())
             element.SetValue(BASE_A3_1, A3_1.tolist())
 
-    def add_support(self, t, penalty):
-        pass
+
 
     def add_coupling(self, t, other, other_t, penalty):
         curve_geometry_a = self.curve_geometry

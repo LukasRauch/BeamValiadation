@@ -27,8 +27,8 @@ start_time = time.time()
 print('Process ID: ', os.getpid())
 print(' ')
 
-# model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Balken\Balken.iga')
-model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Balken\Balken_schief.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Balken\Balken.iga')
+# model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Balken\Balken_schief.iga')
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
@@ -245,62 +245,62 @@ load_properties = model_part.GetProperties()[2] # propperty-ID = 2
 #                             typ,                     Id,  Knoten                   , Eigenschaften
 model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(curve_geometry.NbPoles).Id], load_properties)
 # # # _________________________________________________________________________________________________________________
-# # # # # Definition: Bettung
-# position_t = 0
+# # # # Definition: Bettung
+position_t = 0
 
 
-# # Formfunktionen an Gausspunkt n
-# n_0 = Vector(4)                                     
-# n_1 = Vector(4)                                     
-# n_2 = Vector(4)                                     
-# n_3 = Vector(4)                                     
-# # n_der = Matrix(2,4)                                 
-# shapes.Compute(curve_geometry.Knots, position_t)
-# node_indices = np.arange(shapes.FirstNonzeroPole+1, shapes.LastNonzeroPole+2, dtype=int)
+# Formfunktionen an Gausspunkt n
+n_0 = Vector(4)                                     
+n_1 = Vector(4)                                     
+n_2 = Vector(4)                                     
+n_3 = Vector(4)                                     
+# n_der = Matrix(2,4)                                 
+shapes.Compute(curve_geometry.Knots, position_t)
+node_indices = np.arange(shapes.FirstNonzeroPole+1, shapes.LastNonzeroPole+2, dtype=int)
 
-# theta_0 = 0*np.pi/180
-# point, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = t , Order = 3)
+theta_0 = 0*np.pi/180
+point, r_1, r_2, r_3 = kratos_curve.DerivativesAt(T = t , Order = 3)
 
-# A1, A1_1, A2, A2_1, A3, A3_1 = base_vector()
+A1, A1_1, A2, A2_1, A3, A3_1 = base_vector()
 
 
-# for i in range(shapes.NbNonzeroPoles):
-#     n_0[i] = shapes(0, i)
-#     n_1[i] = shapes(1, i)
-#     n_2[i] = shapes(2, i)
-#     n_3[i] = shapes(3, i)
+for i in range(shapes.NbNonzeroPoles):
+    n_0[i] = shapes(0, i)
+    n_1[i] = shapes(1, i)
+    n_2[i] = shapes(2, i)
+    n_3[i] = shapes(3, i)
 
-# # # Tangentenvektor ausgewertet an Gausspunkt n
-# # # Normierung des Tangentenvektors erfolgt Kratos-intern
-# point, r_1, r_2 = kratos_curve.DerivativesAt(T=position_t, Order=2)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
+# # Tangentenvektor ausgewertet an Gausspunkt n
+# # Normierung des Tangentenvektors erfolgt Kratos-intern
+point, r_1, r_2 = kratos_curve.DerivativesAt(T=position_t, Order=2)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
 
-# # # Generierung der Elemente pro Integrationspunkt
-# # # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
-# element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
-# element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
-# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
-# element_dirichlet_condition.SetValue(T0                                 , r_1)
-# element_dirichlet_condition.SetValue(T0_DER                             , r_2)
+# # Generierung der Elemente pro Integrationspunkt
+# # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
+element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
+element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
+element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
+element_dirichlet_condition.SetValue(T0                                 , r_1)
+element_dirichlet_condition.SetValue(T0_DER                             , r_2)
 
-# element_dirichlet_condition.SetValue(BASE_A1                            , A1)
-# element_dirichlet_condition.SetValue(BASE_A2                            , A2)
-# element_dirichlet_condition.SetValue(BASE_A3                            , A3)
-# element_dirichlet_condition.SetValue(BASE_A1_1                          , A1_1)
-# element_dirichlet_condition.SetValue(BASE_A2_1                          , A2_1)
-# element_dirichlet_condition.SetValue(BASE_A3_1                          , A3_1)
+element_dirichlet_condition.SetValue(BASE_A1                            , A1)
+element_dirichlet_condition.SetValue(BASE_A2                            , A2)
+element_dirichlet_condition.SetValue(BASE_A3                            , A3)
+element_dirichlet_condition.SetValue(BASE_A1_1                          , A1_1)
+element_dirichlet_condition.SetValue(BASE_A2_1                          , A2_1)
+element_dirichlet_condition.SetValue(BASE_A3_1                          , A3_1)
 
-# ### manuelle Vorgabe
-# element_dirichlet_condition.SetValue(N0                                 , n0)
-# element_dirichlet_condition.SetValue(PHI                                , phi)
-# element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
-# ### Randbedingungen 
-# element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
-# element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
-# element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
-# element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
+### manuelle Vorgabe
+element_dirichlet_condition.SetValue(N0                                 , n0)
+element_dirichlet_condition.SetValue(PHI                                , phi)
+element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
+### Randbedingungen 
+element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
+element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
+element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
+element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
 
 # # # # _________________________________________________________________________________________________________________
 # Freiheitsgrade einfügen
@@ -311,16 +311,16 @@ VariableUtils().AddDof(DISPLACEMENT_Z, REACTION_Z, model_part)
 VariableUtils().AddDof(DISPLACEMENT_ROTATION, REACTION_ROTATION, model_part)
 
 # Randbedingungen: Auflager
-# # Kontrollpunkt 1
-model_part.GetNode(1).Fix(DISPLACEMENT_X)
-model_part.GetNode(1).Fix(DISPLACEMENT_Y)
-model_part.GetNode(1).Fix(DISPLACEMENT_Z)
-model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
-
-# # model_part.GetNode(2).Fix(DISPLACEMENT_X)
-model_part.GetNode(2).Fix(DISPLACEMENT_Y)
-model_part.GetNode(2).Fix(DISPLACEMENT_Z)
+# # # Kontrollpunkt 1
+# model_part.GetNode(1).Fix(DISPLACEMENT_X)
+# model_part.GetNode(1).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(1).Fix(DISPLACEMENT_Z)
 # model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
+
+# # # model_part.GetNode(2).Fix(DISPLACEMENT_X)
+# model_part.GetNode(2).Fix(DISPLACEMENT_Y)
+# model_part.GetNode(2).Fix(DISPLACEMENT_Z)
+# # model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
 
 

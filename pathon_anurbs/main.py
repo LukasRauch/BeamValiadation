@@ -1,9 +1,13 @@
 from kratos_utilities import Model
+import os
 import ANurbsDev as an
 import numpy as np
 
+print('Process ID: ', os.getpid())
+print(' ')
+
 geometry = an.Model()
-geometry.Load(r'data/model_line.iga')
+geometry.Load(r'data/model_curve.iga')
 
 model = Model(geometry)
 
@@ -41,8 +45,14 @@ beam_a.add_stiffness(
 # beam_b.add_support(t=beam_a.t1)
 
 
-beam_a.fix_node(index=0, directions=['x', 'y', 'z', 'rotation'])
-beam_a.fix_node(index=1, directions=['y', 'z'])
+# beam_a.fix_node(index=0, directions=['x', 'y', 'z', 'rotation'])
+# beam_a.fix_node(index=1, directions=['y', 'z'])
+
+penalty_dict = {"displacement" : 1e+7, 
+                "torsion" : 1e+7,
+                "rotation" : 1e7}
+
+beam_a.add_support(t = 0, penalty = penalty_dict, material='material_1')
 
 beam_a.add_node_load(index=-1)
 
