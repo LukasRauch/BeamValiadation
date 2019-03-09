@@ -3,7 +3,7 @@ import ANurbsDev as an
 import numpy as np
 
 geometry = an.Model()
-geometry.Load(r'data/model.iga')
+geometry.Load(r'data/model_line.iga')
 
 model = Model(geometry)
 
@@ -49,7 +49,7 @@ beam_a.add_node_load(index=-1)
 
 
 for step, lam in enumerate(np.linspace(0, 1, 10)[1:]):
-    beam_a.set_node_load(index=-1, load=[0, 0, 0.01*lam])
+    beam_a.set_node_load(index=-1, load=[0, 0, 0.001*lam])
     model.solve()
 
 # --- output

@@ -28,8 +28,8 @@ print('Process ID: ', os.getpid())
 print(' ')
 
 # model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Sweep\sweep.iga')
-model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Arc_Torsion\arc_torsion.iga')
-# model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Arc_Torsion\arc_torsion_skew.iga')
+# model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Arc_Torsion\arc_torsion.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Arc_Torsion\arc_torsion_skew.iga')
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
@@ -267,32 +267,32 @@ point, r_1, r_2 = kratos_curve.DerivativesAt(T=position_t, Order=2)  # Tangenten
 
 # Generierung der Elemente pro Integrationspunkt
 # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
-element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
-element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
-element_dirichlet_condition.SetValue(T0                                 , r_1)
-element_dirichlet_condition.SetValue(T0_DER                             , r_2)
+# element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
+# element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
+# element_dirichlet_condition.SetValue(T0                                 , r_1)
+# element_dirichlet_condition.SetValue(T0_DER                             , r_2)
 
-element_dirichlet_condition.SetValue(BASE_A1                            , A1)
-element_dirichlet_condition.SetValue(BASE_A2                            , A2)
-element_dirichlet_condition.SetValue(BASE_A3                            , A3)
-element_dirichlet_condition.SetValue(BASE_A1_1                          , A1_1)
-element_dirichlet_condition.SetValue(BASE_A2_1                          , A2_1)
-element_dirichlet_condition.SetValue(BASE_A3_1                          , A3_1)
+# element_dirichlet_condition.SetValue(BASE_A1                            , A1)
+# element_dirichlet_condition.SetValue(BASE_A2                            , A2)
+# element_dirichlet_condition.SetValue(BASE_A3                            , A3)
+# element_dirichlet_condition.SetValue(BASE_A1_1                          , A1_1)
+# element_dirichlet_condition.SetValue(BASE_A2_1                          , A2_1)
+# element_dirichlet_condition.SetValue(BASE_A3_1                          , A3_1)
 
-### manuelle Vorgabe
-element_dirichlet_condition.SetValue(N0                                 , n0)
-element_dirichlet_condition.SetValue(PHI                                , phi)
-element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
-### Randbedingungen 
-element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
-element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
-element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
-element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
-# # # # _________________________________________________________________________________________________________________
+# ### manuelle Vorgabe
+# element_dirichlet_condition.SetValue(N0                                 , n0)
+# element_dirichlet_condition.SetValue(PHI                                , phi)
+# element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
+# ### Randbedingungen 
+# element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
+# element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
+# element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
+# element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
+# # # # # _________________________________________________________________________________________________________________
 # Freiheitsgrade einfügen
 dof_node = 4
 VariableUtils().AddDof(DISPLACEMENT_X, REACTION_X, model_part)
@@ -301,16 +301,16 @@ VariableUtils().AddDof(DISPLACEMENT_Z, REACTION_Z, model_part)
 VariableUtils().AddDof(DISPLACEMENT_ROTATION, REACTION_ROTATION, model_part)
 
 # Randbedingungen: Auflager
-# # Kontrollpunkt 1
-# model_part.GetNode(1).Fix(DISPLACEMENT_X)
-# model_part.GetNode(1).Fix(DISPLACEMENT_Y)
-# model_part.GetNode(1).Fix(DISPLACEMENT_Z)
-# model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
+# Kontrollpunkt 1
+model_part.GetNode(1).Fix(DISPLACEMENT_X)
+model_part.GetNode(1).Fix(DISPLACEMENT_Y)
+model_part.GetNode(1).Fix(DISPLACEMENT_Z)
+model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
-# # # model_part.GetNode(2).Fix(DISPLACEMENT_X)
-# model_part.GetNode(2).Fix(DISPLACEMENT_Y)
-# model_part.GetNode(2).Fix(DISPLACEMENT_Z)
-# # model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
+# # model_part.GetNode(2).Fix(DISPLACEMENT_X)
+model_part.GetNode(2).Fix(DISPLACEMENT_Y)
+model_part.GetNode(2).Fix(DISPLACEMENT_Z)
+# model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
 
 

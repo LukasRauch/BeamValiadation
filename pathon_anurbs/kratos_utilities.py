@@ -4,6 +4,7 @@ from KratosMultiphysics.StructuralMechanicsApplication import *
 import new_linear_solver_factory
 import ANurbsDev as an
 import numpy as np
+from scipy import integrate
 
 
 def normalized(v):
@@ -11,6 +12,9 @@ def normalized(v):
 
 def normalized_1(v, v_1):
     return v_1 / np.linalg.norm(v) - np.dot(v, v_1) * v / np.linalg.norm(v)**3
+
+def cross_1(u, u_1, v, v_1):
+    return np.cross(u, v_1) + np.cross(u_1, v)
 
 def cross_v_identity(v):
     return np.array([[0.0, -v[2], v[1]], [v[2], 0.0, -v[0]], [-v[1], v[0], 0.0]])
@@ -37,7 +41,7 @@ def compute_lam(v1, v2):
         if l_v1_x_v2 > 1e-7:
             e_hat = e_hat / l_v1_x_v2
             lam = lam + np.outer(e_hat, e_hat) * (1 - v1_d_v2)
-    
+
     return lam
 
 def compute_lam_1(v1, v1_1, v2, v2_1):
@@ -254,20 +258,78 @@ class Beam:
         node.SetSolutionStepValue(POINT_LOAD_Y, load[1])
         node.SetSolutionStepValue(POINT_LOAD_Z, load[2])
 
+    def _func(self, t):
+        curve_geometry = self.curve_geometry
+        _, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t , order = 3)
+        a = np.cross(r_1, r_2)
+        d = np.dot(a, r_3)
+        delta = np.linalg.norm(r_1)
+        alpha = np.linalg.norm(a)
+        tau = d / alpha**2
+        return -tau * delta
+
     def frame_at(self, t):
         curve_geometry = self.curve_geometry
 
         # FIXME: für gekrümmte curven -> minimal rotation frame
 
-        p, a1, a1_1 = curve_geometry.DerivativesAt(t, order=2)
+        p, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t, order = 3)
 
-        a2 = np.array([0, 1, 0])
-        a2_1 = np.array([0, 0, 0])
+        # a2 = np.array([0, 1, 0])
+        # a2_1 = np.array([0, 0, 0])
 
-        a3 = np.array([0, 0, 1])
-        a3_1 = np.array([0, 0, 0])
+        # a3 = np.array([0, 0, 1])
+        # a3_1 = np.array([0, 0, 0])
+
+        # return p, r_1, r_2, a2, a2_1, a3, a3_1
+        tol = 1e-10
+        a = np.cross(r_1,r_2)
+        a_1 = cross_1(r_1, r_2, r_2, r_3)
+        d = np.dot(a, r_3)
+        delta = np.linalg.norm(r_1)
+        alpha = np.linalg.norm(a)
+        if alpha >= tol:
+            kappa = alpha / delta**3
+            tau   = d / alpha**2
+
+            T = r_1 / delta     # Tangente a1
+            B = a / alpha       # Transversale a3
+            N = np.cross(B, T)  # Normale a2
+
+            T_1 = normalized_1(r_1, r_2)
+            B_1 = normalized_1(a, a_1)
+            N_1 = cross_1(B, B_1, T, T_1)
+
+            theta   = integrate.romberg(self._func, 0, t)
+            theta_1 = tau * delta
+
+            a1 = r_1
+            a1_1 = r_2
+
+            a2 = (  N * np.cos(theta) + B * np.sin(theta))         # check
+            a2_1 = ( ( + N_1 * np.cos(theta) - N * np.sin(theta) * theta_1
+                    + B_1 * np.sin(theta) + B * np.cos(theta) * theta_1))
+
+            a3 = ( -N * np.sin(theta) + B * np.cos(theta))         # check
+            a3_1 =   ( - N_1 * np.sin(theta) - N * np.cos(theta) * theta_1
+                        + B_1 * np.cos(theta) - B * np.sin(theta) * theta_1)
+            pass
+        else:   # Fall: Gerader Stab:: Krümmung = inf
+            T = r_1 / delta     # Tangente a1
+            a1 = r_1
+            a1_1 = r_2
+            if np.array_equal(T,[0,0,1]):
+                a2 = np.array([1,0,0])
+            else:
+                a2   = normalized([-r_1[1] , r_1[0] , 0])
+
+            a3   = np.cross(T,a2)
+
+        a2_1 = np.array([0,0,0])
+        a3_1 = np.array([0,0,0])
 
         return p, a1, a1_1, a2, a2_1, a3, a3_1
+
 
     def add_stiffness(self, material):
         if not isinstance(property, Properties):
@@ -346,8 +408,8 @@ class Beam:
 
             T = normalized(A1)
             T_1 = normalized_1(A1, A1_1)
-            
-            def act_phi_at(t):            
+
+            def act_phi_at(t):
                 nonzero_node_indices, shape_functions = self.curve_geometry.ShapeFunctionsAt(t, order=1)
 
                 nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
@@ -355,7 +417,7 @@ class Beam:
                 act_values = np.array([node.GetSolutionStepValue(DISPLACEMENT_ROTATION) for node in nonzero_nodes])
 
                 phi, phi_1 = np.dot(shape_functions, act_values)
-                
+
                 return phi, phi_1
 
             phi, phi_1 = act_phi_at(t)
@@ -381,9 +443,9 @@ class Beam:
             a2 = np.dot(rod_lam, A2)
             a3 = np.dot(rod_lam, A3)
 
-            scale = 0.3
+            scale = 0.5
 
-            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale))
+            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale*0.1))
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
             line_ptr.Attributes().SetColor(f'#ff0000')
             # line_ptr.Attributes().SetArrowhead('End')
@@ -392,7 +454,7 @@ class Beam:
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
             line_ptr.Attributes().SetColor(f'#00ff00')
             # line_ptr.Attributes().SetArrowhead('End')
-            
+
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a3*scale))
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
             line_ptr.Attributes().SetColor(f'#0000ff')
