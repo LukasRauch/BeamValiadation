@@ -7,7 +7,7 @@ print('Process ID: ', os.getpid())
 print(' ')
 
 geometry = an.Model()
-geometry.Load(r'data/model_curve.iga')
+geometry.Load(r'data/model.iga')
 
 model = Model(geometry)
 
@@ -45,21 +45,31 @@ beam_a.add_stiffness(
 # beam_b.add_support(t=beam_a.t1)
 
 
-# beam_a.fix_node(index=0, directions=['x', 'y', 'z', 'rotation'])
+beam_a.fix_node(index=0, directions=['x', 'y', 'z', 'rotation'])
 # beam_a.fix_node(index=1, directions=['y', 'z'])
 
-penalty_dict = {"displacement" : 1e+7, 
-                "torsion" : 1e+7,
-                "rotation" : 1e7}
+# penalty_dict = {"displacement_x" : 1e+10,
+#                 "displacement_y" : 1e+10,
+#                 "displacement_z" : 1e+10, 
+#                 "torsion" : 1e+10,
+#                 "rotation" : 1e+10}
 
-beam_a.add_support(t = 0, penalty = penalty_dict, material='material_1')
+# beam_a.add_support(t = 0, penalty = penalty_dict, material = 'material_1')
+
+penalty_dict = {"displacement_x" : 0e+10,
+                "displacement_y" : 1e+10,
+                "displacement_z" : 0e+10, 
+                "torsion" : 0e+10,
+                "rotation" : 0e+10}
+
+beam_a.add_support(t = 5, penalty = penalty_dict, material = 'material_1')
 
 beam_a.add_node_load(index=-1)
 
 
 
 for step, lam in enumerate(np.linspace(0, 1, 10)[1:]):
-    beam_a.set_node_load(index=-1, load=[0, 0, 0.001*lam])
+    beam_a.set_node_load(index=-1, load=[0, 0, 0.05*lam])
     model.solve()
 
 # --- output

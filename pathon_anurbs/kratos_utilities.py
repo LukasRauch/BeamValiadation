@@ -339,8 +339,8 @@ class Beam:
     # pass
 
     def add_support(self, t, penalty, material):
-        # if not isinstance(property, Properties):
-        material = self.model.property(material)
+        if not isinstance(property, Properties):
+            material = self.model.property(material)
 
         curve_geometry = self.curve_geometry
         model_part = self.model_part
@@ -370,14 +370,24 @@ class Beam:
         condition.SetValue(BASE_A2_1, A2_1.tolist())
         condition.SetValue(BASE_A3_1, A3_1.tolist())
 
-        DISPLACEMENT = 0    # default
+        DISPLACEMENT_X = 0    # default
+        DISPLACEMENT_Y = 0    # default
+        DISPLACEMENT_Z = 0    # default
         TORSION = 0         # default
         ROTATION = 0        # default
 
-        if 'displacement' in penalty:
-            DISPLACEMENT = penalty["displacement"]
-        if 'disp' in penalty:
-            DISPLACEMENT = penalty["disp"]
+        if 'displacement_x' in penalty:
+            DISPLACEMENT_X = penalty["displacement_x"]
+        if 'disp_x' in penalty:
+            DISPLACEMENT_X = penalty["disp_x"]
+        if 'displacement_y' in penalty:
+            DISPLACEMENT_Y = penalty["displacement_y"]
+        if 'disp_y' in penalty:
+            DISPLACEMENT_Y = penalty["disp_y"]
+        if 'displacement_z' in penalty:
+            DISPLACEMENT_Z = penalty["displacement_z"]
+        if 'disp_z' in penalty:
+            DISPLACEMENT_Z = penalty["disp_z"]
         if 'torsion' in penalty:
             TORSION = penalty["torsion"]
         if 'tors' in penalty:
@@ -387,7 +397,9 @@ class Beam:
         if 'rot' in penalty:
             ROTATION = penalty["rot"]
 
-        condition.SetValue(PENALTY_DISPLACEMENT, DISPLACEMENT)
+        condition.SetValue(PENALTY_DISPLACEMENT_X, DISPLACEMENT_X)
+        condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_X)
+        condition.SetValue(PENALTY_DISPLACEMENT_Z, DISPLACEMENT_Y)
         condition.SetValue(PENALTY_TORSION, TORSION)
         condition.SetValue(PENALTY_ROTATION, ROTATION)
     
@@ -419,8 +431,6 @@ class Beam:
 
             nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
 
-            # Generierung der Elemente pro Integrationspunkt
-            # element = model_part.CreateNewElement('IgaBeamElement', n+1, node_indices, element_properties)
             element = self.model.add_element('IgaBeamADElement', nonzero_nodes, material)
 
             element.SetValue(INTEGRATION_WEIGHT, weight)
@@ -438,8 +448,6 @@ class Beam:
             element.SetValue(BASE_A1_1, A1_1.tolist())
             element.SetValue(BASE_A2_1, A2_1.tolist())
             element.SetValue(BASE_A3_1, A3_1.tolist())
-
-
 
     def add_coupling(self, t, other, other_t, penalty):
         curve_geometry_a = self.curve_geometry
@@ -461,7 +469,6 @@ class Beam:
         curve_ptr = geometry.Add(curve_key, an.Curve3D(act_curve_geometry_ptr))
 
         curve_ptr.Attributes().SetLayer(f'Step<{time_step}>')
-
 
         domain = act_curve_geometry.Domain()
 
