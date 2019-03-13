@@ -312,7 +312,7 @@ class Beam:
             a1 = r_1
             a1_1 = r_2
             if np.array_equal(T,[0,0,1]):
-                a2 = np.array([1,0,0])
+                a2 = np.array([0,1,0])
             else:
                 a2   = normalized([-r_1[1] , r_1[0] , 0])
 
@@ -398,14 +398,11 @@ class Beam:
             ROTATION = penalty["rot"]
 
         condition.SetValue(PENALTY_DISPLACEMENT_X, DISPLACEMENT_X)
-        condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_X)
-        condition.SetValue(PENALTY_DISPLACEMENT_Z, DISPLACEMENT_Y)
+        condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_Y)
+        condition.SetValue(PENALTY_DISPLACEMENT_Z, DISPLACEMENT_Z)
         condition.SetValue(PENALTY_TORSION, TORSION)
         condition.SetValue(PENALTY_ROTATION, ROTATION)
     
-
-
-
     def add_stiffness(self, material):
         if not isinstance(property, Properties):
             material = self.model.property(material)
@@ -448,6 +445,17 @@ class Beam:
             element.SetValue(BASE_A1_1, A1_1.tolist())
             element.SetValue(BASE_A2_1, A2_1.tolist())
             element.SetValue(BASE_A3_1, A3_1.tolist())
+
+    def get_domain_T0(self):
+        act_curve_geometry  = self.curve_geometry.Clone()
+        domain = act_curve_geometry.Domain()
+        return domain.T0()
+
+    def get_domain_T1(self):
+        act_curve_geometry  = self.curve_geometry.Clone()
+        domain = act_curve_geometry.Domain()
+        return domain.T1()
+ 
 
     def add_coupling(self, t, other, other_t, penalty):
         curve_geometry_a = self.curve_geometry
