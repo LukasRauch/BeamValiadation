@@ -323,30 +323,52 @@ class Beam:
 
         return p, a1, a1_1, a2, a2_1, a3, a3_1
 
-    # def fix_node(self, index, directions):
-    #     node = self.nodes[index]
-
-    #     if 'x' in directions:
-    #         node.Fix(DISPLACEMENT_X)
-    #     if 'y' in directions:
-    #         node.Fix(DISPLACEMENT_Y)
-    #     if 'z' in directions:
-    #         node.Fix(DISPLACEMENT_Z)
-    #     if 'rotation' in directions:
-    #         node.Fix(DISPLACEMENT_ROTATION)
-
-    # def add_support(self, t, penalty):
-    # pass
-
-    def add_support(self, t, penalty, material):
+    def add_moment(self, t, vector, material):
         if not isinstance(property, Properties):
             material = self.model.property(material)
+
+        curve_geometry = self.curve_geometry
+        # model_part = self.model_part
+
+        # integration_degree = curve_geometry.Degree() + 1
+
+        nonzero_node_indices, shape_functions = curve_geometry.ShapeFunctionsAt(t, order=3)
+
+        nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
+
+        condition = self.model.add_element('IgaBeamMomentCondition', nonzero_nodes, material)
+
+        condition.SetValue(INTEGRATION_WEIGHT, 1)     # FIXME: integration_weight von der Kratoskurve beziehen.
+
+        condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
+
+        _, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+
+        condition.SetValue(BASE_A1, A1.tolist())
+        condition.SetValue(BASE_A2, A2.tolist())
+        condition.SetValue(BASE_A3, A3.tolist())
+        condition.SetValue(BASE_A1_1, A1_1.tolist())
+        condition.SetValue(BASE_A2_1, A2_1.tolist())
+        condition.SetValue(BASE_A3_1, A3_1.tolist())
+
+        condition.SetValue(LOAD_VECTOR_MOMENT, vector)
+
+
+    def add_support(self, t, penalty):
+        material = self.model.add_beam_properties('dummy_material',
+            area = 0, it = 0, iy = 0, iz = 0,
+            youngs_modulus = 0, shear_modulus = 0,
+        )
 
         curve_geometry = self.curve_geometry
         model_part = self.model_part
 
         integration_degree = curve_geometry.Degree() + 1
 
+        curve_geometry = self.curve_geometry
 
         nonzero_node_indices, shape_functions = curve_geometry.ShapeFunctionsAt(t, order=3)
 
@@ -354,8 +376,6 @@ class Beam:
 
         condition = self.model.add_element('IgaBeamWeakDirichletCondition', nonzero_nodes, material)
         
-        condition.SetValue(INTEGRATION_WEIGHT, 1)     # FIXME: integration_weight von der Kratoskurve beziehen.
-
         condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
@@ -408,7 +428,7 @@ class Beam:
             material = self.model.property(material)
 
         curve_geometry = self.curve_geometry
-        model_part = self.model_part
+        # model_part = self.model_part
 
         integration_points = []
 
@@ -446,21 +466,69 @@ class Beam:
             element.SetValue(BASE_A2_1, A2_1.tolist())
             element.SetValue(BASE_A3_1, A3_1.tolist())
 
-    def get_domain_T0(self):
+    def t0(self):
         act_curve_geometry  = self.curve_geometry.Clone()
         domain = act_curve_geometry.Domain()
         return domain.T0()
 
-    def get_domain_T1(self):
+    def t1(self):
         act_curve_geometry  = self.curve_geometry.Clone()
         domain = act_curve_geometry.Domain()
         return domain.T1()
  
 
-    def add_coupling(self, t, other, other_t, penalty):
+    def add_coupling(self, t, other, other_t, penalty, geometry):
+        material = self.model.add_beam_properties('dummy_material',
+            area = 0, it = 0, iy = 0, iz = 0,
+            youngs_modulus = 0, shear_modulus = 0, 
+        )
+
         curve_geometry_a = self.curve_geometry
         curve_geometry_b = other.curve_geometry
-        pass
+        
+        # integration_degree_a = curve_geometry_a.Degree() + 1
+        # integration_degree_b = curve_geometry_b.Degree() + 1
+
+        nonzero_node_indices_a, shape_functions_a = curve_geometry_a.ShapeFunctionsAt(t = t, order=3)
+        nonzero_node_indices_b, shape_functions_b = curve_geometry_b.ShapeFunctionsAt(other_t, order=3)
+
+        nonzero_nodes = []
+
+        nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices_a]
+        nonzero_nodes_b = [other.nodes[index] for index in nonzero_node_indices_b]
+
+        nonzero_nodes.extend(nonzero_nodes_b)
+
+        condition = self.model.add_element('IgaBeamADWeakCoupling', nonzero_nodes, material)
+
+        condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions_a[0])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions_a[1])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions_a[2])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions_a[3])
+
+        condition.SetValue(SHAPE_FUNCTION_VALUES_B     , shape_functions_b[0])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1_B, shape_functions_b[1])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2_B, shape_functions_b[2])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3_B, shape_functions_b[3])
+
+        XA, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+
+        condition.SetValue(BASE_A1, A1.tolist())
+        condition.SetValue(BASE_A2, A2.tolist())
+        condition.SetValue(BASE_A3, A3.tolist())
+        condition.SetValue(BASE_A1_1, A1_1.tolist())
+        condition.SetValue(BASE_A2_1, A2_1.tolist())
+        condition.SetValue(BASE_A3_1, A3_1.tolist())
+
+        XB, B1, B1_1, B2, B2_1, B3, B3_1 = other.frame_at(other_t)
+
+        condition.SetValue(BASE_B1, B1.tolist())
+        condition.SetValue(BASE_B2, B2.tolist())
+        condition.SetValue(BASE_B3, B3.tolist())
+        condition.SetValue(BASE_B1_1, B1_1.tolist())
+
+        geometry.Add(an.Point3D(location=XA))
+        geometry.Add(an.Point3D(location=XB))
 
     def update(self, time_step):
         geometry = self.model.geometry
