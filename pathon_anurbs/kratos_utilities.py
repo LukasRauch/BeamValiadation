@@ -486,9 +486,6 @@ class Beam:
         curve_geometry_a = self.curve_geometry
         curve_geometry_b = other.curve_geometry
         
-        # integration_degree_a = curve_geometry_a.Degree() + 1
-        # integration_degree_b = curve_geometry_b.Degree() + 1
-
         nonzero_node_indices_a, shape_functions_a = curve_geometry_a.ShapeFunctionsAt(t = t, order=3)
         nonzero_node_indices_b, shape_functions_b = curve_geometry_b.ShapeFunctionsAt(other_t, order=3)
 
@@ -529,6 +526,33 @@ class Beam:
 
         geometry.Add(an.Point3D(location=XA))
         geometry.Add(an.Point3D(location=XB))
+
+        if 'displacement_x' in penalty:
+            DISPLACEMENT_X = penalty["displacement_x"]
+        if 'disp_x' in penalty:
+            DISPLACEMENT_X = penalty["disp_x"]
+        if 'displacement_y' in penalty:
+            DISPLACEMENT_Y = penalty["displacement_y"]
+        if 'disp_y' in penalty:
+            DISPLACEMENT_Y = penalty["disp_y"]
+        if 'displacement_z' in penalty:
+            DISPLACEMENT_Z = penalty["displacement_z"]
+        if 'disp_z' in penalty:
+            DISPLACEMENT_Z = penalty["disp_z"]
+        if 'torsion' in penalty:
+            TORSION = penalty["torsion"]
+        if 'tors' in penalty:
+            TORSION = penalty["tors"]
+        if 'rotation' in penalty:
+            ROTATION = penalty["rotation"]
+        if 'rot' in penalty:
+            ROTATION = penalty["rot"]
+
+        condition.SetValue(PENALTY_DISPLACEMENT_X, DISPLACEMENT_X)
+        condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_Y)
+        condition.SetValue(PENALTY_DISPLACEMENT_Z, DISPLACEMENT_Z)
+        condition.SetValue(PENALTY_TORSION, TORSION)
+        condition.SetValue(PENALTY_ROTATION, ROTATION)
 
     def update(self, time_step):
         geometry = self.model.geometry
@@ -588,7 +612,7 @@ class Beam:
             a2 = np.dot(rod_lam, A2)
             a3 = np.dot(rod_lam, A3)
 
-            scale = 0.5
+            scale = 0.25
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale*0.1))
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
