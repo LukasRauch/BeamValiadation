@@ -26,7 +26,7 @@ model.add_beam_properties('material_1',
     # it = c1 * a * b**3,
     # iy = (a * b**3)/12,   # Flächenträgheitsmoment Iy
     # iz = (b * a**3)/12,   # Flächenträgheitsmoment Iz
-    area = 10000,   # Querschnittsfläche
+    area = 1000000,   # Querschnittsfläche
     it = 5,
     iy = 100,   # Flächenträgheitsmoment Iy
     iz = 100,   # Flächenträgheitsmoment Iz
@@ -58,7 +58,8 @@ penalty_dict = {"displacement_x" : 1e+10,
                 "displacement_y" : 1e+10,
                 "displacement_z" : 1e+10, 
                 "torsion" : 1e+10,
-                "rotation" : 1e+10}
+                "rotation_2" : 1e+10,
+                "rotation_3" : 1e+10}
 
 beam_a.add_coupling(t=beam_a.t1(), other=beam_b, other_t=beam_b.t0(), penalty = penalty_dict, geometry=geometry)
 
@@ -70,26 +71,29 @@ penalty_dict = {"displacement_x" : 1e+10,
                 "displacement_y" : 1e+10,
                 "displacement_z" : 1e+10, 
                 "torsion" : 0e+10,
-                "rotation" : 1e+10}
+                "rotation_2" : 1e+10,
+                "rotation_3" : 1e+10}
 
 beam_a.add_support(t = beam_a.t0(), penalty = {"displacement_x" : 1e+07,
                                                 "displacement_y" : 1e+07,
                                                 "displacement_z" : 1e+07, 
                                                 "torsion" : 1e+07,
-                                                "rotation" : 1e+07})
+                                                "rotation_2" : 1e+07,
+                                                "rotation_3" : 1e+07})
 
 # beam_b.add_support(t = beam_b.t1(), penalty = {"displacement_x" : 1e+07,
 #                                                 "displacement_y" : 1e+07,
 #                                                 "displacement_z" : 1e+07, 
 #                                                 "torsion" : 1e+07,
-#                                                 "rotation" : 1e+07})
+#                                                 "rotation_2" : 1e+07,
+#                                                 "rotation_3" : 1e+07})
 
 # beam_a.add_moment(t = beam_a.t1(), vector = moment, material = 'material_1' )
 
 beam_a.add_node_load(index=-1)
 beam_b.add_node_load(index= -1)
 
-for step, lam in enumerate(np.linspace(0, 1, 21)[1:]):
+for step, lam in enumerate(np.linspace(0, 1, 11)[1:]):
     print(' ##############################')
     print('Force lambda-z: ', lam )
     # beam_a.set_node_load(index=-1, load=[-0.001*lam, 0 , 0])
@@ -97,7 +101,7 @@ for step, lam in enumerate(np.linspace(0, 1, 21)[1:]):
     # beam_a.set_node_load(index=-1, load=[0, 0 , 1*lam])
     # beam_a.set_node_load(index=-1, load=[0, 0 , 0 ])
 
-    beam_b.set_node_load(index=-1, load=[0,0 , 2*lam ])
+    beam_b.set_node_load(index=-1, load=[0,0 , 5*lam ])
 
     model.solve()
 

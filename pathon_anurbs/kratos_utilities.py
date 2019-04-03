@@ -413,16 +413,22 @@ class Beam:
             TORSION = penalty["torsion"]
         if 'tors' in penalty:
             TORSION = penalty["tors"]
-        if 'rotation' in penalty:
-            ROTATION = penalty["rotation"]
-        if 'rot' in penalty:
-            ROTATION = penalty["rot"]
+        if 'rotation_2' in penalty:
+            ROTATION_2 = penalty["rotation_2"]
+        if 'rot_2' in penalty:
+            ROTATION_2 = penalty["rot_2"]
+        if 'rotation_3' in penalty:
+            ROTATION_3 = penalty["rotation_3"]
+        if 'rot_3' in penalty:
+            ROTATION_3 = penalty["rot_3"]
+            
 
         condition.SetValue(PENALTY_DISPLACEMENT_X, DISPLACEMENT_X)
         condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_Y)
         condition.SetValue(PENALTY_DISPLACEMENT_Z, DISPLACEMENT_Z)
         condition.SetValue(PENALTY_TORSION, TORSION)
-        condition.SetValue(PENALTY_ROTATION, ROTATION)
+        condition.SetValue(PENALTY_ROTATION_2, ROTATION_2)
+        condition.SetValue(PENALTY_ROTATION_3, ROTATION_3)
     
     def add_stiffness(self, material):
         if not isinstance(property, Properties):
@@ -544,16 +550,21 @@ class Beam:
             TORSION = penalty["torsion"]
         if 'tors' in penalty:
             TORSION = penalty["tors"]
-        if 'rotation' in penalty:
-            ROTATION = penalty["rotation"]
-        if 'rot' in penalty:
-            ROTATION = penalty["rot"]
+        if 'rotation_2' in penalty:
+            ROTATION_2 = penalty["rotation_2"]
+        if 'rot_2' in penalty:
+            ROTATION_2 = penalty["rot_2"]
+        if 'rotation_3' in penalty:
+            ROTATION_3 = penalty["rotation_3"]
+        if 'rot_3' in penalty:
+            ROTATION_3 = penalty["rot_3"]
 
         condition.SetValue(PENALTY_DISPLACEMENT_X, DISPLACEMENT_X)
         condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_Y)
         condition.SetValue(PENALTY_DISPLACEMENT_Z, DISPLACEMENT_Z)
         condition.SetValue(PENALTY_TORSION, TORSION)
-        condition.SetValue(PENALTY_ROTATION, ROTATION)
+        condition.SetValue(PENALTY_ROTATION_2, ROTATION_2)
+        condition.SetValue(PENALTY_ROTATION_3, ROTATION_3)
 
     def update(self, time_step):
         geometry = self.model.geometry
