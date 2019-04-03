@@ -9,23 +9,24 @@ start_time = time.time()
 print('Process ID: ', os.getpid())
 print(' ')
 
-model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Balken\Balken.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\pathon_anurbs\data\Benchmark_Time\E02.iga')
+open('OutputStandard.txt', 'w').close()
+
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
 curve_geometry = curve_item.geometry().geometry
 
 #Modell Erzeugen
-# model_part = ModelPart('Model')
+model_part = ModelPart('Model')
 
-# variablen definieren die jeder knoten speichern soll
-# model_part.AddNodalSolutionStepVariable(DISPLACEMENT)
-# model_part.AddNodalSolutionStepVariable(DISPLACEMENT_ROTATION)
-# model_part.AddNodalSolutionStepVariable(REACTION)
-# model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
-# model_part.AddNodalSolutionStepVariable(POINT_LOAD)
-# model_part.AddNodalSolutionStepVariable(LOAD_VECTOR_MOMENT)
-model_part = AddBeamDOFs()
+# # variablen definieren die jeder knoten speichern soll
+model_part.AddNodalSolutionStepVariable(DISPLACEMENT)
+model_part.AddNodalSolutionStepVariable(DISPLACEMENT_ROTATION)
+model_part.AddNodalSolutionStepVariable(REACTION)
+model_part.AddNodalSolutionStepVariable(REACTION_ROTATION)
+model_part.AddNodalSolutionStepVariable(POINT_LOAD)
+model_part.AddNodalSolutionStepVariable(LOAD_VECTOR_MOMENT)
 
 # Querschnittswerte
 a = 1       # Querschnittshöhe
@@ -36,12 +37,12 @@ Iz = (b * a^3)/12   # Flächenträgheitsmoment Iz
 
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
-element_properties.SetValue(CROSS_AREA          , 100)     # m²
-element_properties.SetValue(YOUNG_MODULUS       , 1)      # kN/m²
-element_properties.SetValue(SHEAR_MODULUS       , 0.5)     # kN/m²
+element_properties.SetValue(CROSS_AREA          , 200)     # m²
+element_properties.SetValue(YOUNG_MODULUS       , 250)      # kN/m²
+element_properties.SetValue(SHEAR_MODULUS       , 175)     # kN/m²
 element_properties.SetValue(MOMENT_OF_INERTIA_Y , 100)  # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , 500)  # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_T , 100) # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 100)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_T , 50) # m4
 element_properties.SetValue(POISSON_RATIO       , 0)        # m4
 element_properties.SetValue(DENSITY             , 78.5)
 
@@ -127,7 +128,7 @@ for n, (t, weight) in enumerate(integration_points):    # 4 Integrationspunkte
 # Randbedingungen: Knotenlast
 load_properties = model_part.GetProperties()[2] # property-ID = 2
 #                             typ,                     Id,  Knoten                   , Eigenschaften
-model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(4).Id], load_properties)
+model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(curve_geometry.NbPoles-1).Id], load_properties)
 
 
 # # # _________________________________________________________________________________________________________________
@@ -155,23 +156,23 @@ point, tangent = kratos_curve.DerivativesAt(T=position_t, Order=1)  # Tangentenv
 
 # Generierung der Elemente pro Integrationspunkt
 # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
-element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
-element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
-element_dirichlet_condition.SetValue(T0                                 , tangent)
-element_dirichlet_condition.SetValue(T0_DER                             , [0,0,0])
-### manuelle Vorgabe
-element_dirichlet_condition.SetValue(N0                                 , n0)
-element_dirichlet_condition.SetValue(PHI                                , phi)
-element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
-### Randbedingungen 
-element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
-element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
-element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
-element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
+# element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', element_count+1, node_indices, element_properties)
+# element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
+# element_dirichlet_condition.SetValue(T0                                 , tangent)
+# element_dirichlet_condition.SetValue(T0_DER                             , [0,0,0])
+# ### manuelle Vorgabe
+# element_dirichlet_condition.SetValue(N0                                 , n0)
+# element_dirichlet_condition.SetValue(PHI                                , phi)
+# element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
+# ### Randbedingungen 
+# element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
+# element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
+# element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
+# element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 123)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
 
 # # # #_________________________________________________________________________________________________________________
 
@@ -184,14 +185,14 @@ VariableUtils().AddDof(DISPLACEMENT_ROTATION, REACTION_ROTATION, model_part)
 
 # Randbedingungen: Auflager
 # # Kontrollpunkt 1
-# model_part.GetNode(1).Fix(DISPLACEMENT_X)
-# model_part.GetNode(1).Fix(DISPLACEMENT_Y)
-# model_part.GetNode(1).Fix(DISPLACEMENT_Z)
-# model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
+model_part.GetNode(1).Fix(DISPLACEMENT_X)
+model_part.GetNode(1).Fix(DISPLACEMENT_Y)
+model_part.GetNode(1).Fix(DISPLACEMENT_Z)
+model_part.GetNode(1).Fix(DISPLACEMENT_ROTATION)
 
 # # model_part.GetNode(2).Fix(DISPLACEMENT_X)
-# model_part.GetNode(2).Fix(DISPLACEMENT_Y)
-# model_part.GetNode(2).Fix(DISPLACEMENT_Z)
+model_part.GetNode(2).Fix(DISPLACEMENT_Y)
+model_part.GetNode(2).Fix(DISPLACEMENT_Z)
 # model_part.GetNode(2).Fix(DISPLACEMENT_ROTATION)
 
 # model_part.GetNode(3).Fix(DISPLACEMENT_Y)
@@ -235,7 +236,7 @@ solver = ResidualBasedNewtonRaphsonStrategy(
 solver.SetEchoLevel(1)
 
 num_pole = curve_geometry.NbPoles
-num_load_steps = 5
+num_load_steps = 20
 
 disp_X = []
 disp_Y = []
@@ -249,9 +250,9 @@ disp_Z = np.empty([num_load_steps, num_pole])
 multi_curve = Multi.MultiCurve()
 
 for i in range(0, num_load_steps+1):
-    F = -i * 10/num_load_steps
+    F = -i * 100/num_load_steps
     moment_vec          = [0, i * 10/num_load_steps, 0]
-    model_part.GetNode(4).SetSolutionStepValue(POINT_LOAD_Z, F)
+    model_part.GetNode(curve_geometry.NbPoles-1).SetSolutionStepValue(POINT_LOAD_Z, F)
     # model_part.GetElement(5)
     # element_load_properties.SetValue(LOAD_VECTOR_MOMENT, moment_vec)
 
@@ -290,48 +291,48 @@ for i in range(0, num_load_steps+1):
                     + '%.12f' % (model_part.GetNode(k+1).Z - model_part.GetNode(k+1).Z0) +  "\t\t" )
 
 
-    # Create a B-Spline Curve instance
-    plot_curve = BSpline.Curve()
-    #Set up a Curve
-    plot_curve.degree = curve_geometry.Degree
-    ctlpts_list = open("C:\_Masterarbeit\BeamValidation\Balken\ctlpts_list.txt", "w")
+#     # Create a B-Spline Curve instance
+#     plot_curve = BSpline.Curve()
+#     #Set up a Curve
+#     plot_curve.degree = curve_geometry.Degree
+#     ctlpts_list = open("C:\_Masterarbeit\BeamValidation\python_base\Balken\ctlpts_list.txt", "w")
 
-    # Draw the control points polygon, the 3D curve and the vectors
-    # fig = plt.figure('figure X', figsize=(10.67, 8), dpi= 96) 
-    # ax = Axes3D(fig)
+#     # Draw the control points polygon, the 3D curve and the vectors
+#     # fig = plt.figure('figure X', figsize=(10.67, 8), dpi= 96) 
+#     # ax = Axes3D(fig)
     
-    for j in range(curve_geometry.NbPoles):
-        data = model_part.GetNode(j+1).X , model_part.GetNode(j+1).Y , model_part.GetNode(j+1).Z
-        ctlpts_list.write(str(model_part.GetNode(j+1).X ) + ',' +
-                          str(model_part.GetNode(j+1).Y ) + ',' +
-                          str(model_part.GetNode(j+1).Z ) + '\n')
+#     for j in range(curve_geometry.NbPoles):
+#         data = model_part.GetNode(j+1).X , model_part.GetNode(j+1).Y , model_part.GetNode(j+1).Z
+#         ctlpts_list.write(str(model_part.GetNode(j+1).X ) + ',' +
+#                           str(model_part.GetNode(j+1).Y ) + ',' +
+#                           str(model_part.GetNode(j+1).Z ) + '\n')
 
-    ctlpts_list.close()
-    plot_curve.ctrlpts = exchange.import_txt("C:\_Masterarbeit\BeamValidation\Balken\ctlpts_list.txt")
-    plot_curve.knotvector = utilities.generate_knot_vector(plot_curve.degree, len(plot_curve.ctrlpts))
-    # Set evaluation delta 
-    # plot_curve.delta = 0.001
-    # plot_curve.evaluate 
+#     ctlpts_list.close()
+#     plot_curve.ctrlpts = exchange.import_txt("C:\_Masterarbeit\BeamValidation\python_base\Balken\ctlpts_list.txt")
+#     plot_curve.knotvector = utilities.generate_knot_vector(plot_curve.degree, len(plot_curve.ctrlpts))
+#     # Set evaluation delta 
+#     # plot_curve.delta = 0.001
+#     # plot_curve.evaluate 
 
-    # add to mulit_curve
-    multi_curve.add(plot_curve)
+#     # add to mulit_curve
+#     multi_curve.add(plot_curve)
 
 
-print("\nProzes time:  %s seconds ---" % (time.time() - start_time))
-print('done!')
-# print("Prozes time:  %s seconds ---" % (time.time() - start_time))
-# print("Exit!")print("\nProzes time:  %s seconds ---" % (time.time() - start_time))
-print('done!')
-# print("Prozes time:  %s seconds ---" % (time.time() - start_time))
-# print("Exit!")
+# print("\nProzes time:  %s seconds ---" % (time.time() - start_time))
+# print('done!')
+# # print("Prozes time:  %s seconds ---" % (time.time() - start_time))
+# # print("Exit!")print("\nProzes time:  %s seconds ---" % (time.time() - start_time))
+# print('done!')
+# # print("Prozes time:  %s seconds ---" % (time.time() - start_time))
+# # print("Exit!")
 
-# Set evaluation delta 
-multi_curve.delta = 0.001
-# multi_curve.evaluate
-# plot the controlpoint polygon and the evaluated curve
-vis_comp = VisMPL.VisCurve3D()
-multi_curve.vis = vis_comp
-multi_curve.render(cpcolor='black', evalcolor='red') 
+# # # Set evaluation delta 
+# # multi_curve.delta = 0.001
+# # # multi_curve.evaluate
+# # # plot the controlpoint polygon and the evaluated curve
+# # vis_comp = VisMPL.VisCurve3D()
+# # multi_curve.vis = vis_comp
+# # multi_curve.render(cpcolor='black', evalcolor='red') 
 
 
 

@@ -168,7 +168,8 @@ class Model:
         # Abbruchkriterium
         relative_tolerance = 1e-4
         absolute_tolerance = 1e-4
-        conv_criteria = DisplacementCriteria(relative_tolerance, absolute_tolerance)
+        conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
+        # conv_criteria = DisplacementCriteria(relative_tolerance, absolute_tolerance)
         conv_criteria.SetEchoLevel(1)
 
         # Löser
@@ -614,7 +615,10 @@ class Beam:
 
             scale = 0.25
 
-            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale*0.1))
+            # print('a2', a2, A2)
+            # print('a3', a3, A3)
+
+            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
             line_ptr.Attributes().SetColor(f'#ff0000')
             # line_ptr.Attributes().SetArrowhead('End')
@@ -628,4 +632,18 @@ class Beam:
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
             line_ptr.Attributes().SetColor(f'#0000ff')
             # line_ptr.Attributes().SetArrowhead('End')
+
+    def print_displacement(self):
+        geometry = self.model.geometry
+        act_curve_geometry = self.curve_geometry.Clone()
+        model_part = self.model_part
+
+        print('\t\t X\t\t\t Y\t\t\t Z'  )
+        for k, pole in enumerate(act_curve_geometry.Poles()):
+            print("Pole "+ str(k+1) + "\t\t"
+                        + '%.12f' % (model_part.GetNode(k+1).X - model_part.GetNode(k+1).X0) +  "\t\t"
+                        + '%.12f' % (model_part.GetNode(k+1).Y - model_part.GetNode(k+1).Y0) +  "\t\t"
+                        + '%.12f' % (model_part.GetNode(k+1).Z - model_part.GetNode(k+1).Z0) +  "\t\t" )
+
+
 

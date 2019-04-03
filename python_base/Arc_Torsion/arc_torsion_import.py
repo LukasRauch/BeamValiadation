@@ -27,7 +27,7 @@ print('Process ID: ', os.getpid())
 print(' ')
 
 # model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Sweep\sweep.iga')
-model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\Arc_Torsion\arc_torsion.iga')
+model = an.Model.open(r'C:\_Masterarbeit\BeamValidation\python_base\Arc_Torsion\arc_torsion.iga')
 
 curve_item = model.of_type('Curve3D')[0]
 curve = curve_item.data
@@ -57,14 +57,12 @@ Shear_Modulus = Youngs_Modulus / (2*(1+Possion_Ratio))
 
 # elementeigenschaften definieren
 element_properties = model_part.GetProperties()[1] # property-id = 1
-element_properties.SetValue(CROSS_AREA          , A)      # m²
-element_properties.SetValue(YOUNG_MODULUS       , Youngs_Modulus)      # kN/m²
-element_properties.SetValue(SHEAR_MODULUS       , Shear_Modulus)      # kN/m²
-element_properties.SetValue(MOMENT_OF_INERTIA_Y , Iy)      # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_Z , Iz)      # m4
-element_properties.SetValue(MOMENT_OF_INERTIA_T , It)      # m4
-element_properties.SetValue(POISSON_RATIO       , Possion_Ratio)                # m4
-element_properties.SetValue(DENSITY             , 78.5)
+element_properties.SetValue(CROSS_AREA          , 200)     # m²
+element_properties.SetValue(YOUNG_MODULUS       , 250)      # kN/m²
+element_properties.SetValue(SHEAR_MODULUS       , 175)     # kN/m²
+element_properties.SetValue(MOMENT_OF_INERTIA_Y , 100)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_Z , 100)  # m4
+element_properties.SetValue(MOMENT_OF_INERTIA_T , 50) # m4
 kratos_curve = NodeCurveGeometry3D(Degree = curve_geometry.Degree, NumberOfNodes = curve_geometry.NbPoles)
 
 # Erstellen der Elemente
@@ -183,48 +181,48 @@ load_properties = model_part.GetProperties()[2] # propperty-ID = 2
 #                             typ,                     Id,  Knoten                   , Eigenschaften
 model_part.CreateNewCondition('PointLoadCondition3D1N', 2, [model_part.GetNode(curve_geometry.NbPoles).Id], load_properties)
 
-# # _________________________________________________________________________________________________________________
-# # # Definition: Bettung
-position_t = 0
+# # # _________________________________________________________________________________________________________________
+# # # # Definition: Bettung
+# position_t = 0
 
 
-# Formfunktionen an Gausspunkt n
-n_0 = Vector(4)                                     
-n_1 = Vector(4)                                     
-n_2 = Vector(4)                                     
-n_3 = Vector(4)                                     
-# n_der = Matrix(2,4)                                 
-shapes.Compute(curve_geometry.Knots, position_t)
+# # Formfunktionen an Gausspunkt n
+# n_0 = Vector(4)                                     
+# n_1 = Vector(4)                                     
+# n_2 = Vector(4)                                     
+# n_3 = Vector(4)                                     
+# # n_der = Matrix(2,4)                                 
+# shapes.Compute(curve_geometry.Knots, position_t)
 
-for i in range(shapes.NbNonzeroPoles):
-    n_0[i] = shapes(0, i)
-    n_1[i] = shapes(1, i)
-    n_2[i] = shapes(2, i)
-    n_3[i] = shapes(3, i)
+# for i in range(shapes.NbNonzeroPoles):
+#     n_0[i] = shapes(0, i)
+#     n_1[i] = shapes(1, i)
+#     n_2[i] = shapes(2, i)
+#     n_3[i] = shapes(3, i)
 
-# Tangentenvektor ausgewertet an Gausspunkt n
-# Normierung des Tangentenvektors erfolgt Kratos-intern
-point, tangent, tangent_1 = kratos_curve.DerivativesAt(T=position_t, Order=2)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
+# # Tangentenvektor ausgewertet an Gausspunkt n
+# # Normierung des Tangentenvektors erfolgt Kratos-intern
+# point, tangent, tangent_1 = kratos_curve.DerivativesAt(T=position_t, Order=2)  # Tangentenvektor am aktuellen Integrationspunkt auswerten
 
-# Generierung der Elemente pro Integrationspunkt
-# element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
-element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', n+2, node_indices, element_properties)
-element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
-element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
-element_dirichlet_condition.SetValue(T0                                 , tangent)
-element_dirichlet_condition.SetValue(T0_DER                             , tangent_1)
-### manuelle Vorgabe
-element_dirichlet_condition.SetValue(N0                                 , n0)
-element_dirichlet_condition.SetValue(PHI                                , phi)
-element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
-### Randbedingungen 
-element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
-element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
-element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
-element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 2)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
+# # Generierung der Elemente pro Integrationspunkt
+# # element = model_part.CreateNewElement('IgaBeamADElement', n+1, node_indices, element_properties)
+# element_dirichlet_condition = model_part.CreateNewElement('IgaBeamWeakDirichletCondition', n+2, node_indices, element_properties)
+# element_dirichlet_condition.SetValue(INTEGRATION_WEIGHT                 , 1)  # *2
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_VALUES              , n_0)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1         , n_1)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2         , n_2)     # Typ Vektor
+# element_dirichlet_condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3         , n_3)     # Typ Vektor
+# element_dirichlet_condition.SetValue(T0                                 , tangent)
+# element_dirichlet_condition.SetValue(T0_DER                             , tangent_1)
+# ### manuelle Vorgabe
+# element_dirichlet_condition.SetValue(N0                                 , n0)
+# element_dirichlet_condition.SetValue(PHI                                , phi)
+# element_dirichlet_condition.SetValue(PHI_DER_1                          , phi_der)
+# ### Randbedingungen 
+# element_dirichlet_condition.SetValue(PENALTY_DISPLACEMENT               , 1e12)
+# element_dirichlet_condition.SetValue(PENALTY_ROTATION                   , 1e12)
+# element_dirichlet_condition.SetValue(PENALTY_TORSION                    , 1e12)
+# element_dirichlet_condition.SetValue(DIRICHLET_CONDITION_TYPE           , 2)    # 1 Displacement, 2 Torsion , 3 Rotation Winkel, 4 Steigung
 
 
 # # # _________________________________________________________________________________________________________________
@@ -308,7 +306,7 @@ for i in range(0, num_load_steps+1):
     F           = i * 0.05/num_load_steps
     moment_vec  = [i * 10/num_load_steps ,0 , 0]
 
-    model_part.GetNode(curve_geometry.NbPoles).SetSolutionStepValue(POINT_LOAD_Z, F)
+    model_part.GetNode(curve_geometry.NbPoles).SetSolutionStepValue(POINT_LOAD_X, F)
     # model_part.GetElement(n+2)
     # element_load_properties.SetValue(LOAD_VECTOR_MOMENT, moment_vec)
     
@@ -345,7 +343,7 @@ for i in range(0, num_load_steps+1):
     plot_curve = BSpline.Curve()
     #Set up a Curve
     plot_curve.degree = curve_geometry.Degree
-    ctlpts_list = open("C:\_Masterarbeit\BeamValidation\Balken\ctlpts_list.txt", "w")
+    ctlpts_list = open("C:\_Masterarbeit\BeamValidation\python_base\Balken\ctlpts_list.txt", "w")
 
     # # Draw the control points polygon, the 3D curve and the vectors
     # fig = plt.figure('figure X', figsize=(10.67, 8), dpi= 96) 
@@ -358,7 +356,7 @@ for i in range(0, num_load_steps+1):
                           str(model_part.GetNode(j+1).Z ) + '\n')
 
     ctlpts_list.close()
-    plot_curve.ctrlpts = exchange.import_txt("C:\_Masterarbeit\BeamValidation\Balken\ctlpts_list.txt")
+    plot_curve.ctrlpts = exchange.import_txt("C:\_Masterarbeit\BeamValidation\python_base\Balken\ctlpts_list.txt")
     plot_curve.knotvector = utilities.generate_knot_vector(plot_curve.degree, len(plot_curve.ctrlpts))
     # Set evaluation delta 
     # plot_curve.delta = 0.001
