@@ -276,6 +276,8 @@ class Beam:
         curve_geometry = self.curve_geometry
         p, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t, order = 3)
 
+        # print("p: " , p)
+
         tol = 1e-10
         a = np.cross(r_1,r_2)
         a_1 = cross_1(r_1, r_2, r_2, r_3)
@@ -464,7 +466,7 @@ class Beam:
             element.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
             element.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
 
-            _, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+            p, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
 
             element.SetValue(BASE_A1, A1.tolist())
             element.SetValue(BASE_A2, A2.tolist())
@@ -472,6 +474,8 @@ class Beam:
             element.SetValue(BASE_A1_1, A1_1.tolist())
             element.SetValue(BASE_A2_1, A2_1.tolist())
             element.SetValue(BASE_A3_1, A3_1.tolist())
+
+            element.SetValue(GAUSS_POINT, list(p))
 
     def t0(self):
         act_curve_geometry  = self.curve_geometry.Clone()
@@ -657,4 +661,115 @@ class Beam:
                         + '%.12f' % (model_part.GetNode(k+1).Z - model_part.GetNode(k+1).Z0) +  "\t\t" )
 
 
+    def write_gausspoints(self):
+        curve_geometry = self.curve_geometry
 
+        integration_points = []
+
+        integration_degree = curve_geometry.Degree() + 1
+
+        w_gp = open("gausspoints.txt", "w+" )
+
+        for span in curve_geometry.Spans():
+            if span.Length() < 1e-7:
+                continue
+
+            integration_points += an.IntegrationPoints.Points1D(
+                degree=integration_degree,
+                domain=span,
+            )
+
+        for i, (t, weight) in enumerate(integration_points):
+            p ,_ ,_ ,_ = curve_geometry.DerivativesAt(t = t, order = 3)
+
+            w_gp.write(str(i+1) + "\t " + str(p[0]) + "\t " + str(p[1]) + "\t " + str(p[2])  + "\n")
+
+    def print_forces(self):
+        fname = 'cutting_force.txt'
+        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3'), 'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4')} )
+
+        weights_N = data['N']
+        norm_N = np.amax(np.absolute(weights_N))
+        weights_M2 = data['M2']
+        norm_M2 = np.amax(np.absolute(weights_M2))
+        weights_M3 = data['M3']
+        norm_M3 = np.amax(np.absolute(weights_M3))
+        scale = 0.25
+
+        geometry = self.model.geometry
+
+        n  = [0, 0, data[-1][4] ]  
+        m2 = [0, data[-1][5] * scale , 0]  
+        if norm_M2 != 0: m2 = [0, data[-1][5] * scale / norm_M2 , 0]  
+        m3 = [0, 0, data[-1][6] * scale ]  
+        if norm_M3 != 0: m3 = [0, 0, data[-1][6] * scale / norm_M3] 
+        
+        x_old_n  = np.add([data[-1][1], data[-1][2], data[-1][3]], n)
+        x_old_m2 = np.add([data[-1][1], data[-1][2], data[-1][3]], m2)
+        x_old_m3 = np.add([data[-1][1], data[-1][2], data[-1][3]], m3) 
+
+        i = len(data) -1
+        while data[i][0] >= 0:
+            print(data[i][0])
+
+            x = [data[i][1], data[i][2], data[i][3]]
+
+            n  = [0, 0, data[i][4] ]  
+            m2 = [0, data[i][5] * scale , 0]  
+            if norm_M2 != 0: m2 = [0, data[i][5] * scale / norm_M2 , 0]  
+            m3 = [0, 0, data[i][6] * scale ]  
+            if norm_M3 != 0: m3 = [0, 0, data[i][6] * scale / norm_M3] 
+
+
+            line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, n)))
+            line_ptr.Attributes().SetLayer(f'Normalkraft N')
+            if data[i][4] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+
+            line_ptr = geometry.Add(an.Line3D(a=x_old_n, b=np.add(x, n)))
+            line_ptr.Attributes().SetLayer(f'Normalkraft N')
+            if data[i][4] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+            x_old_n = np.add(x, n)
+
+            line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, m2)))
+            line_ptr.Attributes().SetLayer(f'Moment Mz')
+            if data[i][5] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+
+            line_ptr = geometry.Add(an.Line3D(a=x_old_m2, b=np.add(x, m2)))
+            line_ptr.Attributes().SetLayer(f'Moment Mz')
+            if data[i][5] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+            x_old_m2 = np.add(x, m2)
+
+            line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, m3)))
+            line_ptr.Attributes().SetLayer(f'Moment My')
+            if data[i][6] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+
+            line_ptr = geometry.Add(an.Line3D(a=x_old_m3, b=np.add(x, m3)))
+            line_ptr.Attributes().SetLayer(f'Moment My')
+            if data[i][6] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+            x_old_m3 = np.add(x, m3)
+            
+
+            if data[i][0] == 1:
+                break
+
+            i -= 1
+
+        pass
