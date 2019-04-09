@@ -5,6 +5,9 @@ import new_linear_solver_factory
 import ANurbsDev as an
 import numpy as np
 from scipy import integrate
+import yaml
+import json
+import pandas as pd
 
 
 def normalized(v):
@@ -166,14 +169,14 @@ class Model:
             r'{"solver_type": "eigen_sparse_lu"}'))
 
         # Abbruchkriterium
-        relative_tolerance = 1e-4
-        absolute_tolerance = 1e-4
-        conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
-        # conv_criteria = DisplacementCriteria(relative_tolerance, absolute_tolerance)
+        relative_tolerance = 1e-7
+        absolute_tolerance = 1e-7
+        # conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
+        conv_criteria = DisplacementCriteria(relative_tolerance, absolute_tolerance)
         conv_criteria.SetEchoLevel(1)
 
         # Löser
-        maximum_iterations = 200 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
+        maximum_iterations = 300 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
         compute_reactions = True
         reform_dofs_at_each_iteration = True
         move_mesh_flag = True
@@ -204,6 +207,9 @@ class Model:
 
 class Beam:
     def __init__(self, model, curve_geometry_ptr):
+
+        self.clear_memory()
+
         curve_geometry = curve_geometry_ptr.Data()
 
         nodes = []
@@ -262,6 +268,23 @@ class Beam:
         node.SetSolutionStepValue(POINT_LOAD_Y, load[1])
         node.SetSolutionStepValue(POINT_LOAD_Z, load[2])
 
+        geometry = self.model.geometry
+
+        scale = 1
+        if np.amax(np.absolute(load)) != 0:
+            scale = np.amax(np.absolute(load))
+
+        load_0 = [node.X, node.Y, node.Z]
+        load_vec = [node.X - load[0]//scale, node.Y - load[1]/scale, node.Z - load[2]/scale]
+
+        line_ptr = geometry.Add(an.Line3D(a=load_vec, b=load_0))
+        line_ptr.Attributes().SetLayer(f'LoadVector')
+        # line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
+        line_ptr.Attributes().SetColor(f'#ff0000')
+        line_ptr.Attributes().SetArrowhead('End')
+
+
+
     def _func(self, t):
         curve_geometry = self.curve_geometry
         _, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t , order = 3)
@@ -296,7 +319,7 @@ class Beam:
             B_1 = normalized_1(a, a_1)
             N_1 = cross_1(B, B_1, T, T_1)
 
-            theta   = integrate.romberg(self._func, 0, t)
+            theta   = integrate.romberg(self._func, 0, t,divmax=10)
             theta_1 = tau * delta
 
             a1 = r_1
@@ -361,10 +384,17 @@ class Beam:
 
 
     def add_support(self, t, penalty):
+
+        geometry = self.model.geometry
+
         material = self.model.add_beam_properties('dummy_material',
             area = 0, it = 0, iy = 0, iz = 0,
             youngs_modulus = 0, shear_modulus = 0,
         )
+
+        bool_support_x = False
+        bool_support_y = False
+        bool_support_z = False
 
         curve_geometry = self.curve_geometry
         model_part = self.model_part
@@ -384,7 +414,7 @@ class Beam:
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
 
-        _, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+        p, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
 
         condition.SetValue(BASE_A1, A1.tolist())
         condition.SetValue(BASE_A2, A2.tolist())
@@ -401,16 +431,22 @@ class Beam:
 
         if 'displacement_x' in penalty:
             DISPLACEMENT_X = penalty["displacement_x"]
+            bool_support_x = True
         if 'disp_x' in penalty:
             DISPLACEMENT_X = penalty["disp_x"]
+            bool_support_x = True
         if 'displacement_y' in penalty:
             DISPLACEMENT_Y = penalty["displacement_y"]
+            bool_support_y = True
         if 'disp_y' in penalty:
             DISPLACEMENT_Y = penalty["disp_y"]
+            bool_support_y = True
         if 'displacement_z' in penalty:
             DISPLACEMENT_Z = penalty["displacement_z"]
+            bool_support_z = True
         if 'disp_z' in penalty:
             DISPLACEMENT_Z = penalty["disp_z"]
+            bool_support_z = True
         if 'torsion' in penalty:
             TORSION = penalty["torsion"]
         if 'tors' in penalty:
@@ -423,7 +459,6 @@ class Beam:
             ROTATION_3 = penalty["rotation_3"]
         if 'rot_3' in penalty:
             ROTATION_3 = penalty["rot_3"]
-            
 
         condition.SetValue(PENALTY_DISPLACEMENT_X, DISPLACEMENT_X)
         condition.SetValue(PENALTY_DISPLACEMENT_Y, DISPLACEMENT_Y)
@@ -431,7 +466,28 @@ class Beam:
         condition.SetValue(PENALTY_TORSION, TORSION)
         condition.SetValue(PENALTY_ROTATION_2, ROTATION_2)
         condition.SetValue(PENALTY_ROTATION_3, ROTATION_3)
+
+        if bool_support_x:
+            line_ptr = geometry.Add(an.Line3D(a=np.add(p,np.array([0.01,0,0])), b=p))
+            line_ptr.Attributes().SetLayer(f'Support')
+            line_ptr.Attributes().SetColor(f'#00ff00')
+            line_ptr.Attributes().SetArrowhead('End')
+
+        
+        if bool_support_y:
+            line_ptr = geometry.Add(an.Line3D(a=np.add(p,np.array([0,0.01,0])), b=p))
+            line_ptr.Attributes().SetLayer(f'Support')
+            line_ptr.Attributes().SetColor(f'#00ff00')
+            line_ptr.Attributes().SetArrowhead('End')
+
     
+        if bool_support_z:
+            line_ptr = geometry.Add(an.Line3D(a=np.add(p,np.array([0,0,0.01])), b=p))
+            line_ptr.Attributes().SetLayer(f'Support')
+            line_ptr.Attributes().SetColor(f'#00ff00')
+            line_ptr.Attributes().SetArrowhead('End')
+
+
     def add_stiffness(self, material):
         if not isinstance(property, Properties):
             material = self.model.property(material)
@@ -476,6 +532,10 @@ class Beam:
             element.SetValue(BASE_A3_1, A3_1.tolist())
 
             element.SetValue(GAUSS_POINT, list(p))
+
+            frame = open('frames.txt', 'a')
+            frame.write( str(p.tolist()) + str(A1.tolist()) + str(A2.tolist()) + str(A3.tolist()) + '\n')
+            frame.close()
 
     def t0(self):
         act_curve_geometry  = self.curve_geometry.Clone()
@@ -633,10 +693,10 @@ class Beam:
             # print('a2', a2, A2)
             # print('a3', a3, A3)
 
-            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
-            line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
-            line_ptr.Attributes().SetColor(f'#ff0000')
-            # line_ptr.Attributes().SetArrowhead('End')
+            # line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
+            # line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
+            # line_ptr.Attributes().SetColor(f'#ff0000')
+            # # line_ptr.Attributes().SetArrowhead('End')
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a2*scale))
             line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
@@ -648,78 +708,88 @@ class Beam:
             line_ptr.Attributes().SetColor(f'#0000ff')
             # line_ptr.Attributes().SetArrowhead('End')
 
-    def print_displacement(self):
-        geometry = self.model.geometry
-        act_curve_geometry = self.curve_geometry.Clone()
-        model_part = self.model_part
-
-        print('\t\t X\t\t\t Y\t\t\t Z'  )
-        for k, pole in enumerate(act_curve_geometry.Poles()):
-            print("Pole "+ str(k+1) + "\t\t"
-                        + '%.12f' % (model_part.GetNode(k+1).X - model_part.GetNode(k+1).X0) +  "\t\t"
-                        + '%.12f' % (model_part.GetNode(k+1).Y - model_part.GetNode(k+1).Y0) +  "\t\t"
-                        + '%.12f' % (model_part.GetNode(k+1).Z - model_part.GetNode(k+1).Z0) +  "\t\t" )
-
-
-    def write_gausspoints(self):
-        curve_geometry = self.curve_geometry
-
-        integration_points = []
-
-        integration_degree = curve_geometry.Degree() + 1
-
-        w_gp = open("gausspoints.txt", "w+" )
-
-        for span in curve_geometry.Spans():
-            if span.Length() < 1e-7:
-                continue
-
-            integration_points += an.IntegrationPoints.Points1D(
-                degree=integration_degree,
-                domain=span,
-            )
-
-        for i, (t, weight) in enumerate(integration_points):
-            p ,_ ,_ ,_ = curve_geometry.DerivativesAt(t = t, order = 3)
-
-            w_gp.write(str(i+1) + "\t " + str(p[0]) + "\t " + str(p[1]) + "\t " + str(p[2])  + "\n")
-
-    def print_forces(self):
+    def print_forces(self, scale):
         fname = 'cutting_force.txt'
-        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3'), 'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4')} )
+        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'), 
+                                        'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
 
-        weights_N = data['N']
-        norm_N = np.amax(np.absolute(weights_N))
-        weights_M2 = data['M2']
-        norm_M2 = np.amax(np.absolute(weights_M2))
-        weights_M3 = data['M3']
-        norm_M3 = np.amax(np.absolute(weights_M3))
-        scale = 0.25
-
+        frame = np.loadtxt('frames.txt', dtype=np.str, delimiter='\s')
+        
         geometry = self.model.geometry
 
-        n  = [0, 0, data[-1][4] ]  
-        m2 = [0, data[-1][5] * scale , 0]  
-        if norm_M2 != 0: m2 = [0, data[-1][5] * scale / norm_M2 , 0]  
-        m3 = [0, 0, data[-1][6] * scale ]  
-        if norm_M3 != 0: m3 = [0, 0, data[-1][6] * scale / norm_M3] 
+        i = len(data) -1
+        list_n  = np.array([])
+        list_m2 = np.array([])
+        list_m3 = np.array([])
+
+        while data[i][0] >= 0:
+            list_n = np.append(list_n , np.absolute(data[i][4]))
+            list_m2 = np.append(list_m2, np.absolute(data[i][5]))
+            list_m3 = np.append(list_m3, np.absolute(data[i][6]))
+
+            if data[i][0] == 1: 
+                break
+            i -= 1
         
+        norm_n =np.amax(list_n)
+        norm_m2 = np.amax(list_m2)
+        norm_m3 = np.amax(list_m3)
+
+        a2 = [data['a2_0'][-1], data['a2_1'][-1], data['a2_2'][-1]]        
+        a3 = [data['a3_0'][-1], data['a3_1'][-1], data['a3_2'][-1]]
+
+        n  = np.dot(a3, data['N'][-1] * scale)
+        if norm_n != 0:  n  = np.dot(a3, data['N'][-1] * scale/norm_n) 
+
+        m2 = np.dot(a2, data['M2'][-1] * scale)
+        if norm_m2 != 0: m2 = np.dot(a2, data['M2'][-1] * scale / norm_m2)
+
+        m3 = np.dot(a3, data['M3'][-1] * scale)
+        if norm_m3 != 0: m3 = np.dot(a3, data['M3'][-1] * scale / norm_m3)
+
+        #Print starting line off the loop
         x_old_n  = np.add([data[-1][1], data[-1][2], data[-1][3]], n)
         x_old_m2 = np.add([data[-1][1], data[-1][2], data[-1][3]], m2)
         x_old_m3 = np.add([data[-1][1], data[-1][2], data[-1][3]], m3) 
 
-        i = len(data) -1
+        line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_n,-n), b=np.add(np.add(x_old_n,-n), n)))
+        line_ptr.Attributes().SetLayer(f'Normalkraft N')
+        if data[i][4] <= 0:
+            line_ptr.Attributes().SetColor(f'#ff0000')     # negative forces = red   
+        else:
+            line_ptr.Attributes().SetColor(f'#0000ff')     # negative forces = red    
+
+        line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_m2, -m2), b=np.add(np.add(x_old_m2, -m2), m2)))
+        line_ptr.Attributes().SetLayer(f'Moment Mz')
+        if data[i][5] <= 0:
+            line_ptr.Attributes().SetColor(f'#ff0000')
+        else:
+            line_ptr.Attributes().SetColor(f'#0000ff')
+
+        line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_m3, -m3), b=np.add(np.add(x_old_m3, -m3), m3)))
+        line_ptr.Attributes().SetLayer(f'Moment My')
+        if data[i][6] <= 0:
+            line_ptr.Attributes().SetColor(f'#ff0000')
+        else:
+            line_ptr.Attributes().SetColor(f'#0000ff')
+
+
+        i = len(data) -2
         while data[i][0] >= 0:
-            print(data[i][0])
+
+            a2 = [data['a2_0'][i], data['a2_1'][i], data['a2_2'][i]]
+            a3 = [data['a3_0'][i], data['a3_1'][i], data['a3_2'][i]]
 
             x = [data[i][1], data[i][2], data[i][3]]
 
-            n  = [0, 0, data[i][4] ]  
-            m2 = [0, data[i][5] * scale , 0]  
-            if norm_M2 != 0: m2 = [0, data[i][5] * scale / norm_M2 , 0]  
-            m3 = [0, 0, data[i][6] * scale ]  
-            if norm_M3 != 0: m3 = [0, 0, data[i][6] * scale / norm_M3] 
+            n  = np.dot(a3, data['N'][i] * scale)
+            if norm_n != 0:  n  = np.dot(a3, data['N'][i] * scale/norm_n) 
 
+            m2 = np.dot(a2, data['M2'][i] * scale)
+            if norm_m2 != 0: m2 = np.dot(a2, data['M2'][i] * scale / norm_m2)
+
+            m3 = np.dot(a3, data['M3'][i] * scale)
+            if norm_m3 != 0: m3 = np.dot(a3, data['M3'][i] * scale / norm_m3)
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, n)))
             line_ptr.Attributes().SetLayer(f'Normalkraft N')
@@ -772,4 +842,59 @@ class Beam:
 
             i -= 1
 
-        pass
+    def print_displacement(self, Id=[]):
+        act_curve_geometry = self.curve_geometry.Clone()
+
+        #Header
+        print('\nDisplacements of ' + str(self.key))
+
+        if Id:
+            node = self.nodes[Id]
+            print(
+                f"{'Id:':<4}{k:<4}",
+                f"{'x:':<4}{node.X - node.X0:<30}" ,
+                f"{'y:':<4}{node.Y - node.Y0:<30}" ,
+                f"{'y:':<4}{node.Z - node.Z0:<30}" 
+                )
+
+        else:
+            for k, pole in enumerate(act_curve_geometry.Poles()):
+                node = self.nodes[k]
+                print(
+                    f"{'Id:':<4}{k:<4}",
+                    f"{'x:':<4}{node.X - node.X0:<30}" ,
+                    f"{'y:':<4}{node.Y - node.Y0:<30}" ,
+                    f"{'y:':<4}{node.Z - node.Z0:<30}" 
+                    )
+
+    def write_displacement(self):
+        act_curve_geometry = self.curve_geometry.Clone()
+
+        #Header
+        data = open('displacements.txt', 'a')
+        data.write('Displacements of ' + str(self.key) + '\n')
+        data.close()
+
+        for k, pole in enumerate(act_curve_geometry.Poles()):
+            node = self.nodes[k]
+            displacement = {k: {'Id': k+1,
+                                'x': node.X - node.X0,
+                                'y': node.Y - node.Y0,
+                                'z': node.Z - node.Z0, 
+                                }
+                            }
+                                    # node = self.nodes[index]
+
+            df = pd.DataFrame.from_dict([displacement])
+            df.to_csv('displacements.txt', header=False, index=False, mode='a')
+
+        data = open('displacements.txt', 'a')
+        data.write('\n\n')
+        data.close()
+
+    def clear_memory(self):
+        open('cutting_force.txt', 'w').close()
+        open('frames.txt', 'w').close()
+        open('displacements.txt', 'w')
+
+
