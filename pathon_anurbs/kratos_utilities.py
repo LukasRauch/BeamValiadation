@@ -268,6 +268,8 @@ class Beam:
         node.SetSolutionStepValue(POINT_LOAD_Y, load[1])
         node.SetSolutionStepValue(POINT_LOAD_Z, load[2])
 
+        #Print load vector
+
         geometry = self.model.geometry
 
         scale = 1
@@ -279,11 +281,8 @@ class Beam:
 
         line_ptr = geometry.Add(an.Line3D(a=load_vec, b=load_0))
         line_ptr.Attributes().SetLayer(f'LoadVector')
-        # line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
         line_ptr.Attributes().SetColor(f'#ff0000')
         line_ptr.Attributes().SetArrowhead('End')
-
-
 
     def _func(self, t):
         curve_geometry = self.curve_geometry
