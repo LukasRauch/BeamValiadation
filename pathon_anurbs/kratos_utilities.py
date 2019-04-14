@@ -764,11 +764,11 @@ class Beam:
 
     def print_forces(self, scale):
         fname = 'cutting_force.txt'
-        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'), 
-                                        'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')}
+        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 'Mt', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'), 
+                                        'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')}
                                , skiprows=0)
 
-        print(data)
+        # print(data)
 
         frame = np.loadtxt('frames.txt', dtype=np.str, delimiter='\s')
         
@@ -778,11 +778,13 @@ class Beam:
         list_n  = np.array([])
         list_m2 = np.array([])
         list_m3 = np.array([])
+        list_mt = np.array([])
 
         while data[i][0] >= 0:
             list_n = np.append(list_n , np.absolute(data[i][4]))
             list_m2 = np.append(list_m2, np.absolute(data[i][5]))
             list_m3 = np.append(list_m3, np.absolute(data[i][6]))
+            list_mt = np.append(list_mt, np.absolute(data[i][7]))
 
             if data[i][0] == 1: 
                 break
@@ -791,6 +793,7 @@ class Beam:
         norm_n =np.amax(list_n)
         norm_m2 = np.amax(list_m2)
         norm_m3 = np.amax(list_m3)
+        norm_mt = np.amax(list_mt)
 
         a2 = [data['a2_0'][-1], data['a2_1'][-1], data['a2_2'][-1]]        
         a3 = [data['a3_0'][-1], data['a3_1'][-1], data['a3_2'][-1]]
@@ -804,17 +807,21 @@ class Beam:
         m3 = np.dot(a3, data['M3'][-1] * scale)
         if norm_m3 != 0: m3 = np.dot(a3, data['M3'][-1] * scale / norm_m3)
 
+        mt = np.dot(a3, data['Mt'][-1] * scale)
+        if norm_mt != 0: m3 = np.dot(a3, data['M3'][-1] * scale / norm_mt)
+
         #Print starting line off the loop
         x_old_n  = np.add([data[-1][1], data[-1][2], data[-1][3]], n)
         x_old_m2 = np.add([data[-1][1], data[-1][2], data[-1][3]], m2)
         x_old_m3 = np.add([data[-1][1], data[-1][2], data[-1][3]], m3) 
+        x_old_mt = np.add([data[-1][1], data[-1][2], data[-1][3]], mt) 
 
         line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_n,-n), b=np.add(np.add(x_old_n,-n), n)))
         line_ptr.Attributes().SetLayer(f'Normalkraft N')
         if data[i][4] <= 0:
             line_ptr.Attributes().SetColor(f'#ff0000')     # negative forces = red   
         else:
-            line_ptr.Attributes().SetColor(f'#0000ff')     # negative forces = red    
+            line_ptr.Attributes().SetColor(f'#0000ff')     # positive forces = blue    
 
         line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_m2, -m2), b=np.add(np.add(x_old_m2, -m2), m2)))
         line_ptr.Attributes().SetLayer(f'Moment Mz')
@@ -826,6 +833,13 @@ class Beam:
         line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_m3, -m3), b=np.add(np.add(x_old_m3, -m3), m3)))
         line_ptr.Attributes().SetLayer(f'Moment My')
         if data[i][6] <= 0:
+            line_ptr.Attributes().SetColor(f'#ff0000')
+        else:
+            line_ptr.Attributes().SetColor(f'#0000ff')
+
+        line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_mt, -mt), b=np.add(np.add(x_old_mt, -mt), mt)))
+        line_ptr.Attributes().SetLayer(f'Moment Mt')
+        if data[i][7] <= 0:
             line_ptr.Attributes().SetColor(f'#ff0000')
         else:
             line_ptr.Attributes().SetColor(f'#0000ff')
@@ -847,6 +861,9 @@ class Beam:
 
             m3 = np.dot(a3, data['M3'][i] * scale)
             if norm_m3 != 0: m3 = np.dot(a3, data['M3'][i] * scale / norm_m3)
+
+            mt = np.dot(a3, data['Mt'][i] * scale)
+            if norm_mt != 0: mt = np.dot(a3, data['Mt'][i] * scale / norm_mt)
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, n)))
             line_ptr.Attributes().SetLayer(f'Normalkraft N')
@@ -892,7 +909,22 @@ class Beam:
             else:
                 line_ptr.Attributes().SetColor(f'#0000ff')
             x_old_m3 = np.add(x, m3)
-            
+
+            line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, mt)))
+            line_ptr.Attributes().SetLayer(f'Moment Mt')
+            if data[i][7] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+
+            line_ptr = geometry.Add(an.Line3D(a=x_old_mt, b=np.add(x, mt)))
+            line_ptr.Attributes().SetLayer(f'Moment Mt')
+            if data[i][7] <= 0:
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            else:
+                line_ptr.Attributes().SetColor(f'#0000ff')
+            x_old_mt = np.add(x, mt)
+
 
             if data[i][0] == 1:
                 break
@@ -967,6 +999,7 @@ class Beam:
                      '{:>30s}'.format('Normal Force:')+
                      '{:>30s}'.format('Moment M:')+
                      '{:>30s}'.format('Moment Mz:')+
+                     '{:>30s}'.format('Moment Mt:')+
                      '{:>30s}'.format('local frame T:')+
                      '{:>10s}'.format('x')+
                      '{:>21s}'.format('y')+
@@ -982,9 +1015,9 @@ class Beam:
                     )
         header.write('\n#')
 
-        for i in range(404):
+        for i in range(434):
             header.write('*')
-        header.write('#\n#\n')
+        header.write('\n#\n')
 
         header.close()
 

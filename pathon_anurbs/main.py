@@ -7,7 +7,7 @@ print('Process ID: ', os.getpid())
 print(' ')
 
 geometry = an.Model()
-geometry.Load(r'data/model.iga')
+geometry.Load(r'data/model_curve.iga')
 open('OutputAD.txt', 'w').close()
 
 model = Model(geometry)
@@ -22,9 +22,9 @@ youngs_modulus = 100
 
 model.add_beam_properties('material_1',
     area = 200,   # Querschnittsfläche
-    it = 0.1,
-    iy = 1,   # Flächenträgheitsmoment Iy
-    iz = 1,   # Flächenträgheitsmoment Iz
+    it = 0.01,
+    iy = 0.1,   # Flächenträgheitsmoment Iy
+    iz = 0.1,   # Flächenträgheitsmoment Iz
     youngs_modulus = youngs_modulus,
     shear_modulus = youngs_modulus / 2,
 )
@@ -84,17 +84,17 @@ beam_a.add_support(t = beam_a.t0(), penalty = {"displacement_x" : 1e+10,
 # beam_a.nodes[-1].Fix(DISPLACEMENT_ROTATION)
 
 beam_a.add_node_load(index=-1)
-# beam_a.add_node_load_moment(t=beam_a.t1(), force=[0, 0, 0], moment=[0,1,0])
+# beam_a.add_node_load_moment(t=beam_a.t1(), force=[0, 0, 0], moment=[0,0,0])
 # beam_b.add_node_load(index=-1)
 
 model.init_solver()
 
-for step, lam in enumerate(np.linspace(0, 1, 3)[1:]):
-    # beam_a.make_header(step)
+for step, lam in enumerate(np.linspace(0, 1, 6)[1:]):
+    beam_a.make_header(step)
 
     print(' ##############################')
     print('Force lambda-z: ', lam )
-    F = 0.01 * lam
+    F = 0.001 * lam
     print(F)
 
     # beam_a.set_node_value(index=-1, directions=['rotation'], value=F)
@@ -111,9 +111,9 @@ for step, lam in enumerate(np.linspace(0, 1, 3)[1:]):
 
     # beam_a.add_moment(t = beam_a.t1(), vector = moment, material = 'material_1' )
 
-    model.solve()
+    model.solve(lam)
 
-    # beam_a.write_displacement()
+    beam_a.write_displacement()
     geometry.Save(r'data/output.iga')
 
 
