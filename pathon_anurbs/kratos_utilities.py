@@ -93,6 +93,8 @@ class Model:
         self.penalty = []
         self.penalty_key = {}
 
+        self.update_conditions = []
+
     def add_node(self, key, location):
         node_id = len(self.nodes) + 1
         node = self.model_part.CreateNewNode(node_id, *location)
@@ -158,7 +160,7 @@ class Model:
         self._element_keys[element_id] = element
         return element
 
-    def solve(self):
+    def init_solver(self):
         # Löser konfigurieren
         self.model_part.SetBufferSize(1)
 
@@ -181,7 +183,7 @@ class Model:
         reform_dofs_at_each_iteration = True
         move_mesh_flag = True
 
-        solver = ResidualBasedNewtonRaphsonStrategy(
+        self.solver = ResidualBasedNewtonRaphsonStrategy(
             self.model_part,
             time_scheme,
             linear_solver,
@@ -191,13 +193,17 @@ class Model:
             reform_dofs_at_each_iteration,
             move_mesh_flag
         )
-        solver.SetEchoLevel(1)
+        self.solver.SetEchoLevel(1)
 
+    def solve(self, lam=1.0):
         self._time_step += 1
 
         self.model_part.CloneTimeStep(self._time_step)
 
-        solver.Solve()
+        for update_condition in self.update_conditions:
+            update_condition(lam)
+
+        self.solver.Solve()
 
         self.update()
 
@@ -261,6 +267,46 @@ class Beam:
         node.SetSolutionStepValue(POINT_LOAD_Y, load[1])
         node.SetSolutionStepValue(POINT_LOAD_Z, load[2])
 
+    def add_node_load_moment(self, t, force=[0,0,0], moment=[0,0,0]):
+
+        curve_geometry = self.curve_geometry
+        model_part = self.model_part
+
+        integration_degree = curve_geometry.Degree() + 1
+
+        curve_geometry = self.curve_geometry
+
+        nonzero_node_indices, shape_functions = curve_geometry.ShapeFunctionsAt(t, order=3)
+
+        nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
+
+        load_properties = self.model.add_properties()
+
+        condition = self.model.add_condition('IgaBeamLoadCondition', nonzero_nodes, load_properties)
+        
+        condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
+        condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
+
+        p, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+
+        condition.SetValue(BASE_A1, A1.tolist())
+        condition.SetValue(BASE_A2, A2.tolist())
+        condition.SetValue(BASE_A3, A3.tolist())
+        condition.SetValue(BASE_A1_1, A1_1.tolist())
+        condition.SetValue(BASE_A2_1, A2_1.tolist())
+        condition.SetValue(BASE_A3_1, A3_1.tolist())
+
+        condition.SetValue(LOAD_VECTOR_FORCE, force)
+        condition.SetValue(LOAD_VECTOR_MOMENT, moment)
+
+        def update_condition(lam):
+            condition.SetValue(LOAD_VECTOR_FORCE, (np.array(force) * lam).tolist())
+            condition.SetValue(LOAD_VECTOR_MOMENT, (np.array(moment) * lam).tolist())
+
+        self.model.update_conditions.append(update_condition)
+
     def set_node_load(self, index, load):
         node = self.nodes[index]
 
@@ -269,7 +315,6 @@ class Beam:
         node.SetSolutionStepValue(POINT_LOAD_Z, load[2])
 
         #Print load vector
-
         geometry = self.model.geometry
 
         scale = 1
@@ -284,6 +329,24 @@ class Beam:
         line_ptr.Attributes().SetColor(f'#ff0000')
         line_ptr.Attributes().SetArrowhead('End')
 
+
+
+    def set_node_value(self, index, directions, value=0):
+        node = self.nodes[index]
+
+        if 'x' in directions:
+            node.SetSolutionStepValue(DISPLACEMENT_X, value)
+        if 'y' in directions:
+            node.SetSolutionStepValue(DISPLACEMENT_Y, value)
+        if 'z' in directions:
+            node.SetSolutionStepValue(DISPLACEMENT_Z, value)
+        if 'rotation' in directions:
+            node.SetSolutionStepValue(DISPLACEMENT_ROTATION, value)
+            # node.SetValue(DISPLACEMENT_ROTATION, value)
+
+        # node.SetSolutionStepValue(str(key), 0, value)
+        # node.SetSolutionStepValue(DISPLACEMENT_ROTATION, 0, value)
+
     def _func(self, t):
         curve_geometry = self.curve_geometry
         _, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t , order = 3)
@@ -297,8 +360,6 @@ class Beam:
     def frame_at(self, t):
         curve_geometry = self.curve_geometry
         p, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t, order = 3)
-
-        # print("p: " , p)
 
         tol = 1e-10
         a = np.cross(r_1,r_2)
@@ -318,7 +379,7 @@ class Beam:
             B_1 = normalized_1(a, a_1)
             N_1 = cross_1(B, B_1, T, T_1)
 
-            theta   = integrate.romberg(self._func, 0, t,divmax=10)
+            theta   = integrate.romberg(self._func, 0, t,divmax=15)
             theta_1 = tau * delta
 
             a1 = r_1
@@ -386,14 +447,11 @@ class Beam:
 
         geometry = self.model.geometry
 
+
         material = self.model.add_beam_properties('dummy_material',
             area = 0, it = 0, iy = 0, iz = 0,
             youngs_modulus = 0, shear_modulus = 0,
         )
-
-        bool_support_x = False
-        bool_support_y = False
-        bool_support_z = False
 
         curve_geometry = self.curve_geometry
         model_part = self.model_part
@@ -427,6 +485,10 @@ class Beam:
         DISPLACEMENT_Z = 0    # default
         TORSION = 0         # default
         ROTATION = 0        # default
+
+        bool_support_x = False
+        bool_support_y = False
+        bool_support_z = False
 
         if 'displacement_x' in penalty:
             DISPLACEMENT_X = penalty["displacement_x"]
@@ -472,20 +534,17 @@ class Beam:
             line_ptr.Attributes().SetColor(f'#00ff00')
             line_ptr.Attributes().SetArrowhead('End')
 
-        
         if bool_support_y:
             line_ptr = geometry.Add(an.Line3D(a=np.add(p,np.array([0,0.01,0])), b=p))
             line_ptr.Attributes().SetLayer(f'Support')
             line_ptr.Attributes().SetColor(f'#00ff00')
             line_ptr.Attributes().SetArrowhead('End')
-
     
         if bool_support_z:
             line_ptr = geometry.Add(an.Line3D(a=np.add(p,np.array([0,0,0.01])), b=p))
             line_ptr.Attributes().SetLayer(f'Support')
             line_ptr.Attributes().SetColor(f'#00ff00')
             line_ptr.Attributes().SetArrowhead('End')
-
 
     def add_stiffness(self, material):
         if not isinstance(property, Properties):
@@ -545,7 +604,6 @@ class Beam:
         act_curve_geometry  = self.curve_geometry.Clone()
         domain = act_curve_geometry.Domain()
         return domain.T1()
- 
 
     def add_coupling(self, t, other, other_t, penalty, geometry):
         material = self.model.add_beam_properties('dummy_material',
@@ -687,30 +745,30 @@ class Beam:
             a2 = np.dot(rod_lam, A2)
             a3 = np.dot(rod_lam, A3)
 
-            scale = 0.25
+            scale = 0.4
 
-            # print('a2', a2, A2)
-            # print('a3', a3, A3)
-
-            # line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
-            # line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
-            # line_ptr.Attributes().SetColor(f'#ff0000')
-            # # line_ptr.Attributes().SetArrowhead('End')
+            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
+            line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
+            line_ptr.Attributes().SetColor(f'#ff0000')
+            # line_ptr.Attributes().SetArrowhead('End')
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a2*scale))
-            line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
+            line_ptr.Attributes().SetLayer(f'local coordinates')
             line_ptr.Attributes().SetColor(f'#00ff00')
             # line_ptr.Attributes().SetArrowhead('End')
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a3*scale))
-            line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
+            line_ptr.Attributes().SetLayer(f'local coordinates')
             line_ptr.Attributes().SetColor(f'#0000ff')
             # line_ptr.Attributes().SetArrowhead('End')
 
     def print_forces(self, scale):
         fname = 'cutting_force.txt'
         data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'), 
-                                        'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
+                                        'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')}
+                               , skiprows=0)
+
+        print(data)
 
         frame = np.loadtxt('frames.txt', dtype=np.str, delimiter='\s')
         
@@ -853,7 +911,8 @@ class Beam:
                 f"{'Id:':<4}{k:<4}",
                 f"{'x:':<4}{node.X - node.X0:<30}" ,
                 f"{'y:':<4}{node.Y - node.Y0:<30}" ,
-                f"{'y:':<4}{node.Z - node.Z0:<30}" 
+                f"{'z:':<4}{node.Z - node.Z0:<30}" ,
+                f"{'r:':<4}{node.GetSolutionStepValue(DISPLACEMENT_ROTATION):<30}" ,
                 )
 
         else:
@@ -863,7 +922,8 @@ class Beam:
                     f"{'Id:':<4}{k:<4}",
                     f"{'x:':<4}{node.X - node.X0:<30}" ,
                     f"{'y:':<4}{node.Y - node.Y0:<30}" ,
-                    f"{'y:':<4}{node.Z - node.Z0:<30}" 
+                    f"{'z:':<4}{node.Z - node.Z0:<30}" ,
+                    f"{'r:':<4}{node.GetSolutionStepValue(DISPLACEMENT_ROTATION):<30}" ,
                     )
 
     def write_displacement(self):
@@ -896,4 +956,37 @@ class Beam:
         open('frames.txt', 'w').close()
         open('displacements.txt', 'w')
 
+    def make_header(self, nstep=0):
+        header = open('cutting_force.txt', 'a')
+        header.write('#\n' + '# Kratos Output \n#')
+        header.write(f'\n# solution step :: {nstep} \n')
+        header.write('{:>4s}'.format('# Id')+
+                     '{:>20s}'.format('Gauss x:')+
+                     '{:>20s}'.format('Gauss y:')+
+                     '{:>20s}'.format('Gauss z:')+
+                     '{:>30s}'.format('Normal Force:')+
+                     '{:>30s}'.format('Moment M:')+
+                     '{:>30s}'.format('Moment Mz:')+
+                     '{:>30s}'.format('local frame T:')+
+                     '{:>10s}'.format('x')+
+                     '{:>21s}'.format('y')+
+                     '{:>21s}'.format('z')+
+                     '{:>30s}'.format('lokal frame N:')+
+                     '{:>10s}'.format('x')+
+                     '{:>21s}'.format('y')+
+                     '{:>21s}'.format('z')+
+                     '{:>30s}'.format('lokal frame V:')+
+                     '{:>10s}'.format('x')+  
+                     '{:>21s}'.format('y')+
+                     '{:>21s}'.format('z')
+                    )
+        header.write('\n#')
 
+        for i in range(404):
+            header.write('*')
+        header.write('#\n#\n')
+
+        header.close()
+
+
+ 
