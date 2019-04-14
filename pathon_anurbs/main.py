@@ -7,7 +7,7 @@ print('Process ID: ', os.getpid())
 print(' ')
 
 geometry = an.Model()
-geometry.Load(r'data/model_curve.iga')
+geometry.Load(r'data/einfeldtraeger.iga')
 open('OutputAD.txt', 'w').close()
 
 model = Model(geometry)
@@ -39,38 +39,38 @@ model.add_beam_properties('material_2',
 
 
 beam_a = model.beam('curve_a')
-# beam_b = model.beam('curve_b')
+beam_b = model.beam('curve_b')
 
 beam_a.add_stiffness(
     material='material_1',
 )
 
-# beam_b.add_stiffness(
-#     material='material_1',
-# )
+beam_b.add_stiffness(
+    material='material_1',
+)
 
-# penalty_dict = {"displacement_x" : 1e+10,
-#                 "displacement_y" : 1e+10,
-#                 "displacement_z" : 1e+10, 
-#                 "torsion" : 1e+10,
-#                 "rotation_2" : 1e+10,
-#                 "rotation_3" : 1e+10}
+penalty_dict = {"displacement_x" : 1e+10,
+                "displacement_y" : 1e+10,
+                "displacement_z" : 1e+10, 
+                "torsion" : 1e+10,
+                "rotation_2" : 1e+10,
+                "rotation_3" : 1e+10}
 
-# beam_a.add_coupling(t=beam_a.t1(), other=beam_b, other_t=beam_b.t0(), penalty = penalty_dict, geometry=geometry)
+beam_a.add_coupling(t=beam_a.t1(), other=beam_b, other_t=beam_b.t0(), penalty = penalty_dict, geometry=geometry)
 
 beam_a.add_support(t = beam_a.t0(), penalty = {"displacement_x" : 1e+10,
                                                 "displacement_y" : 1e+10,
                                                 "displacement_z" : 1e+10, 
-                                                "torsion" : 1e+10,
-                                                "rotation_2" : 1e+10,
-                                                "rotation_3" : 1e+10})
+                                                "torsion" : 0e+10,
+                                                "rotation_2" : 0e+10,
+                                                "rotation_3" : 0e+10})
 
-# beam_b.add_support(t = beam_b.t1(), penalty = {"displacement_x" : 0e+10,
-#                                                 "displacement_y" : 1e+10,
-#                                                 "displacement_z" : 1e+10, 
-#                                                 "torsion" : 0e+10,
-#                                                 "rotation_2" : 0e+10,
-#                                                 "rotation_3" : 0e+10})
+beam_b.add_support(t = beam_b.t1(), penalty = {"displacement_x" : 0e+10,
+                                                "displacement_y" : 1e+10,
+                                                "displacement_z" : 1e+10, 
+                                                "torsion" : 0e+10,
+                                                "rotation_2" : 0e+10,
+                                                "rotation_3" : 0e+10})
 
 # from KratosMultiphysics import *
 # from KratosMultiphysics.IgaApplication import *
@@ -94,26 +94,24 @@ for step, lam in enumerate(np.linspace(0, 1, 6)[1:]):
 
     print(' ##############################')
     print('Force lambda-z: ', lam )
-    F = 0.001 * lam
+    F = 2 * lam
     print(F)
 
     # beam_a.set_node_value(index=-1, directions=['rotation'], value=F)
 
     # beam_a.set_node_load(index=-1, load=[ -F ,0, 0])
-    beam_a.set_node_load(index=-1, load=[0, 0, -F])
+    beam_a.set_node_load(index=-1, load=[0, -F, 0])
     # w = (F * 4**3)/(48 * youngs_modulus * 1)     # Einfeldträger
     # w = (F*10)**2/(youngs_modulus * 1)          # Kragarmpaper
     # print('w = ' + '%.12f' % (w) )      
 
     # beam_b.set_node_load(index=-1, load=[0,0 , -0.00001*lam ])
 
-    # moment = [0, 1*lam, 0]
-
-    # beam_a.add_moment(t = beam_a.t1(), vector = moment, material = 'material_1' )
-
     model.solve(lam)
 
-    beam_a.write_displacement()
+    beam_a.write_displacement(step)
+    beam_b.write_displacement(step)
+    beam_a.write_results(step)
     geometry.Save(r'data/output.iga')
 
 
@@ -122,11 +120,6 @@ for step, lam in enumerate(np.linspace(0, 1, 6)[1:]):
 beam_a.print_forces(1)
 print('BEAM_A')
 beam_a.print_displacement()
-
-# print('BEAM_B')
-# beam_b.write_displacement()
-# beam_b.print_displacement()
-
 
 geometry.Save(r'data/output.iga')
 
