@@ -171,14 +171,14 @@ class Model:
             r'{"solver_type": "eigen_sparse_lu"}'))
 
         # Abbruchkriterium
-        relative_tolerance = 1e-7
-        absolute_tolerance = 1e-7
+        relative_tolerance = 1e-09
+        absolute_tolerance = 1e-09
         # conv_criteria = ResidualCriteria(relative_tolerance, absolute_tolerance)
         conv_criteria = DisplacementCriteria(relative_tolerance, absolute_tolerance)
         conv_criteria.SetEchoLevel(1)
 
         # Löser
-        maximum_iterations = 300 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
+        maximum_iterations = 600 #!! Wenn der Löser nur eine Iteration durchführt erhälst du eine lineare Lösung > Iterationszahl erhöhen!
         compute_reactions = True
         reform_dofs_at_each_iteration = True
         move_mesh_flag = True
@@ -283,7 +283,7 @@ class Beam:
         load_properties = self.model.add_properties()
 
         condition = self.model.add_condition('IgaBeamLoadCondition', nonzero_nodes, load_properties)
-        
+
         condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
@@ -317,7 +317,7 @@ class Beam:
         #Print load vector
         geometry = self.model.geometry
 
-        scale = 1
+        scale = 0.2
         if np.amax(np.absolute(load)) != 0:
             scale = np.amax(np.absolute(load))
 
@@ -354,14 +354,16 @@ class Beam:
         d = np.dot(a, r_3)
         delta = np.linalg.norm(r_1)
         alpha = np.linalg.norm(a)
-        tau = d / alpha**2
+        tau = 0
+        if alpha >= 1e-13:
+            tau = d / alpha**2
         return -tau * delta
 
     def frame_at(self, t):
         curve_geometry = self.curve_geometry
         p, r_1, r_2, r_3 = curve_geometry.DerivativesAt(t = t, order = 3)
 
-        tol = 1e-10
+        tol = 1e-12
         a = np.cross(r_1,r_2)
         a_1 = cross_1(r_1, r_2, r_2, r_3)
         d = np.dot(a, r_3)
@@ -371,33 +373,34 @@ class Beam:
             kappa = alpha / delta**3
             tau   = d / alpha**2
 
-            T = r_1 / delta     # Tangente a1
-            B = a / alpha       # Transversale a3
-            N = np.cross(B, T)  # Normale a2
+            T = r_1 / delta     
+            B = a / alpha       
+            N = np.cross(B, T)  
 
             T_1 = normalized_1(r_1, r_2)
             B_1 = normalized_1(a, a_1)
             N_1 = cross_1(B, B_1, T, T_1)
 
-            theta   = integrate.romberg(self._func, 0, t,divmax=15)
+            theta   = integrate.romberg(self._func, 0 , t, divmax=12)
             theta_1 = tau * delta
 
             a1 = r_1
             a1_1 = r_2
 
-            a2 = (  N * np.cos(theta) + B * np.sin(theta))        
-            a2_1 = ( ( + N_1 * np.cos(theta) - N * np.sin(theta) * theta_1
+            a3 = -(  N * np.cos(theta) + B * np.sin(theta))
+            a3_1 = -( ( + N_1 * np.cos(theta) - N * np.sin(theta) * theta_1
                     + B_1 * np.sin(theta) + B * np.cos(theta) * theta_1))
 
-            a3 = ( -N * np.sin(theta) + B * np.cos(theta))        
-            a3_1 =   ( - N_1 * np.sin(theta) - N * np.cos(theta) * theta_1
+            a2 = -( -N * np.sin(theta) + B * np.cos(theta))
+            a2_1 =   -( - N_1 * np.sin(theta) - N * np.cos(theta) * theta_1
                         + B_1 * np.cos(theta) - B * np.sin(theta) * theta_1)
             pass
         else:   # Fall: Gerader Stab:: Krümmung = inf
-            T = r_1 / delta    
+            T = r_1 / delta
             a1 = r_1
             a1_1 = r_2
-            if np.array_equal(T,[0,0,1]):
+            # if np.array_equal(T,[0,0,1]):
+            if T[2] == 1:
                 a2 = np.array([0,1,0])
             else:
                 a2   = normalized([-r_1[1] , r_1[0] , 0])
@@ -407,6 +410,12 @@ class Beam:
         a2_1 = np.array([0,0,0])
         a3_1 = np.array([0,0,0])
 
+        # print('a1 ', a1)
+        # print('a2 ', a2)
+        # print('a3 ', a3)
+        # print('a1_1 ', a1_1)
+        # print('a2_1 ', a2_1)
+        # print('a3_1 ', a3_1)
         return p, a1, a1_1, a2, a2_1, a3, a3_1
 
     def add_moment(self, t, vector, material):
@@ -464,8 +473,8 @@ class Beam:
 
         nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
 
-        condition = self.model.add_element('IgaBeamWeakDirichletCondition', nonzero_nodes, material)
-        
+        condition = self.model.add_element('IgaBeamWeakBeddingCondition', nonzero_nodes, material)
+
         condition.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
         condition.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
@@ -492,22 +501,22 @@ class Beam:
 
         if 'displacement_x' in penalty:
             DISPLACEMENT_X = penalty["displacement_x"]
-            bool_support_x = True
+            if DISPLACEMENT_X != 0: bool_support_x = True
         if 'disp_x' in penalty:
             DISPLACEMENT_X = penalty["disp_x"]
-            bool_support_x = True
+            if DISPLACEMENT_X != 0: bool_support_x = True
         if 'displacement_y' in penalty:
             DISPLACEMENT_Y = penalty["displacement_y"]
-            bool_support_y = True
+            if DISPLACEMENT_Y != 0: bool_support_y = True
         if 'disp_y' in penalty:
             DISPLACEMENT_Y = penalty["disp_y"]
-            bool_support_y = True
+            if DISPLACEMENT_Y != 0: bool_support_y = True
         if 'displacement_z' in penalty:
             DISPLACEMENT_Z = penalty["displacement_z"]
-            bool_support_z = True
+            if DISPLACEMENT_Z != 0: bool_support_z = True
         if 'disp_z' in penalty:
             DISPLACEMENT_Z = penalty["disp_z"]
-            bool_support_z = True
+            if DISPLACEMENT_Z != 0: bool_support_z = True
         if 'torsion' in penalty:
             TORSION = penalty["torsion"]
         if 'tors' in penalty:
@@ -539,12 +548,14 @@ class Beam:
             line_ptr.Attributes().SetLayer(f'Support')
             line_ptr.Attributes().SetColor(f'#00ff00')
             line_ptr.Attributes().SetArrowhead('End')
-    
+
         if bool_support_z:
             line_ptr = geometry.Add(an.Line3D(a=np.add(p,np.array([0,0,0.01])), b=p))
             line_ptr.Attributes().SetLayer(f'Support')
             line_ptr.Attributes().SetColor(f'#00ff00')
             line_ptr.Attributes().SetArrowhead('End')
+
+        return condition
 
     def add_stiffness(self, material):
         if not isinstance(property, Properties):
@@ -595,6 +606,63 @@ class Beam:
             frame.write( str(p.tolist()) + str(A1.tolist()) + str(A2.tolist()) + str(A3.tolist()) + '\n')
             frame.close()
 
+    def evaluate_point(self, t, material):
+        if not isinstance(property, Properties):
+            material = self.model.property(material)
+
+        geometry = self.model.geometry
+
+        curve_geometry = self.curve_geometry
+        model_part = self.model_part
+
+        integration_degree = curve_geometry.Degree() + 1
+
+        curve_geometry = self.curve_geometry
+
+        nonzero_node_indices, shape_functions = curve_geometry.ShapeFunctionsAt(t, order=3)
+
+        nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
+
+        # condition = self.model.add_element('IgaBeamWeakBeddingCondition', nonzero_nodes, material)
+        element = self.model.add_element('IgaBeamADPostprocess', nonzero_nodes, material)
+
+
+        element.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
+        element.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
+        element.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
+        element.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
+
+        p, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+
+        element.SetValue(BASE_A1, A1.tolist())
+        element.SetValue(BASE_A2, A2.tolist())
+        element.SetValue(BASE_A3, A3.tolist())
+        element.SetValue(BASE_A1_1, A1_1.tolist())
+        element.SetValue(BASE_A2_1, A2_1.tolist())
+        element.SetValue(BASE_A3_1, A3_1.tolist())
+
+        # nonzero_node_indices, shape_functions = curve_geometry.ShapeFunctionsAt(t, order=3)
+
+        # nonzero_nodes = [self.nodes[index] for index in nonzero_node_indices]
+
+        # element = self.model.add_element('IgaBeamADElement', nonzero_nodes, material)
+
+        # element.SetValue(INTEGRATION_WEIGHT, weight)
+
+        # element.SetValue(SHAPE_FUNCTION_VALUES     , shape_functions[0])
+        # element.SetValue(SHAPE_FUNCTION_LOCAL_DER_1, shape_functions[1])
+        # element.SetValue(SHAPE_FUNCTION_LOCAL_DER_2, shape_functions[2])
+        # element.SetValue(SHAPE_FUNCTION_LOCAL_DER_3, shape_functions[3])
+
+        # p, A1, A1_1, A2, A2_1, A3, A3_1 = self.frame_at(t)
+
+        # element.SetValue(BASE_A1, A1.tolist())
+        # element.SetValue(BASE_A2, A2.tolist())
+        # element.SetValue(BASE_A3, A3.tolist())
+        # element.SetValue(BASE_A1_1, A1_1.tolist())
+        # element.SetValue(BASE_A2_1, A2_1.tolist())
+        # element.SetValue(BASE_A3_1, A3_1.tolist())
+
     def t0(self):
         act_curve_geometry  = self.curve_geometry.Clone()
         domain = act_curve_geometry.Domain()
@@ -608,12 +676,12 @@ class Beam:
     def add_coupling(self, t, other, other_t, penalty, geometry):
         material = self.model.add_beam_properties('dummy_material',
             area = 0, it = 0, iy = 0, iz = 0,
-            youngs_modulus = 0, shear_modulus = 0, 
+            youngs_modulus = 0, shear_modulus = 0,
         )
 
         curve_geometry_a = self.curve_geometry
         curve_geometry_b = other.curve_geometry
-        
+
         nonzero_node_indices_a, shape_functions_a = curve_geometry_a.ShapeFunctionsAt(t = t, order=3)
         nonzero_node_indices_b, shape_functions_b = curve_geometry_b.ShapeFunctionsAt(other_t, order=3)
 
@@ -745,33 +813,33 @@ class Beam:
             a2 = np.dot(rod_lam, A2)
             a3 = np.dot(rod_lam, A3)
 
-            scale = 0.4
+            scale = 0.25
 
-            line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
-            line_ptr.Attributes().SetLayer(f'Step<{time_step}>')
-            line_ptr.Attributes().SetColor(f'#ff0000')
-            # line_ptr.Attributes().SetArrowhead('End')
+            # line_ptr = geometry.Add(an.Line3D(a=x, b=x+a1*scale/np.linalg.norm(a1)))
+            # line_ptr.Attributes().SetLayer(f'local coordinates a1')
+            # line_ptr.Attributes().SetColor(f'#ff0000')
+            # # line_ptr.Attributes().SetArrowhead('End')
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a2*scale))
-            line_ptr.Attributes().SetLayer(f'local coordinates')
+            line_ptr.Attributes().SetLayer(f'local coordinates a2')
             line_ptr.Attributes().SetColor(f'#00ff00')
             # line_ptr.Attributes().SetArrowhead('End')
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=x+a3*scale))
-            line_ptr.Attributes().SetLayer(f'local coordinates')
+            line_ptr.Attributes().SetLayer(f'local coordinates a3')
             line_ptr.Attributes().SetColor(f'#0000ff')
             # line_ptr.Attributes().SetArrowhead('End')
 
     def print_forces(self, scale):
         fname = 'kratos_data.txt'
-        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 'Mt', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'), 
+        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 'Mt', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'),
                                         'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')}
                                , skiprows=0)
 
         # print(data)
 
         frame = np.loadtxt('frames.txt', dtype=np.str, delimiter='\s')
-        
+
         geometry = self.model.geometry
 
         i = len(data) -1
@@ -780,26 +848,30 @@ class Beam:
         list_m3 = np.array([])
         list_mt = np.array([])
 
-        while data[i][0] >= 0:
+        while data[i][0] > 1:
             list_n = np.append(list_n , np.absolute(data[i][4]))
             list_m2 = np.append(list_m2, np.absolute(data[i][5]))
             list_m3 = np.append(list_m3, np.absolute(data[i][6]))
             list_mt = np.append(list_mt, np.absolute(data[i][7]))
 
-            if data[i][0] == 1: 
-                break
+            # if data[i][0] == 1:
+            #     break
             i -= 1
-        
-        norm_n =np.amax(list_n)
+
+        norm_n =np.amax(list_n)     # normalize forces
         norm_m2 = np.amax(list_m2)
         norm_m3 = np.amax(list_m3)
         norm_mt = np.amax(list_mt)
+        # norm_n = 1      # do not normalize forces
+        # norm_m2 = 1
+        # norm_m3 = 1
+        # norm_mt = 1
 
-        a2 = [data['a2_0'][-1], data['a2_1'][-1], data['a2_2'][-1]]        
+        a2 = [data['a2_0'][-1], data['a2_1'][-1], data['a2_2'][-1]]
         a3 = [data['a3_0'][-1], data['a3_1'][-1], data['a3_2'][-1]]
 
         n  = np.dot(a3, data['N'][-1] * scale)
-        if norm_n != 0:  n  = np.dot(a3, data['N'][-1] * scale/norm_n) 
+        if norm_n != 0:  n  = np.dot(a3, data['N'][-1] * scale/norm_n)
 
         m2 = np.dot(a2, data['M2'][-1] * scale)
         if norm_m2 != 0: m2 = np.dot(a2, data['M2'][-1] * scale / norm_m2)
@@ -811,17 +883,17 @@ class Beam:
         if norm_mt != 0: m3 = np.dot(a3, data['M3'][-1] * scale / norm_mt)
 
         #Print starting line off the loop
-        x_old_n  = np.add([data[-1][1], data[-1][2], data[-1][3]], n)
+        x_old_n  = np.add([data[-1][1], data[-1][2], data[-1][3]], -n)
         x_old_m2 = np.add([data[-1][1], data[-1][2], data[-1][3]], m2)
-        x_old_m3 = np.add([data[-1][1], data[-1][2], data[-1][3]], m3) 
-        x_old_mt = np.add([data[-1][1], data[-1][2], data[-1][3]], mt) 
+        x_old_m3 = np.add([data[-1][1], data[-1][2], data[-1][3]], m3)
+        x_old_mt = np.add([data[-1][1], data[-1][2], data[-1][3]], mt)
 
-        line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_n,-n), b=np.add(np.add(x_old_n,-n), n)))
-        line_ptr.Attributes().SetLayer(f'Normalkraft N')
+        line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_n,n), b= np.add(np.add(x_old_n,-n), n)))
+        line_ptr.Attributes().SetLayer(f'Normalkraft N1')
         if data[i][4] <= 0:
-            line_ptr.Attributes().SetColor(f'#ff0000')     # negative forces = red   
+            line_ptr.Attributes().SetColor(f'#05293')     # negative forces = red
         else:
-            line_ptr.Attributes().SetColor(f'#0000ff')     # positive forces = blue    
+            line_ptr.Attributes().SetColor(f'#05293')     # positive forces = blue
 
         line_ptr = geometry.Add(an.Line3D(a=np.add(x_old_m2, -m2), b=np.add(np.add(x_old_m2, -m2), m2)))
         line_ptr.Attributes().SetLayer(f'Moment My')
@@ -854,7 +926,7 @@ class Beam:
             x = [data[i][1], data[i][2], data[i][3]]
 
             n  = np.dot(a3, data['N'][i] * scale)
-            if norm_n != 0:  n  = np.dot(a3, data['N'][i] * scale/norm_n) 
+            if norm_n != 0:  n  = np.dot(a3, data['N'][i] * scale/norm_n)
 
             m2 = np.dot(a3, data['M2'][i] * scale)
             if norm_m2 != 0: m2 = np.dot(a3, data['M2'][i] * scale / norm_m2)
@@ -865,34 +937,34 @@ class Beam:
             mt = np.dot(a3, data['Mt'][i] * scale)
             if norm_mt != 0: mt = np.dot(a3, data['Mt'][i] * scale / norm_mt)
 
-            line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, n)))
+            line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, -n)))
             line_ptr.Attributes().SetLayer(f'Normalkraft N')
             if data[i][4] <= 0:
-                line_ptr.Attributes().SetColor(f'#ff0000')
+                line_ptr.Attributes().SetColor(f'#05293')
             else:
-                line_ptr.Attributes().SetColor(f'#0000ff')
+                line_ptr.Attributes().SetColor(f'#05293')
 
-            line_ptr = geometry.Add(an.Line3D(a=x_old_n, b=np.add(x, n)))
+            line_ptr = geometry.Add(an.Line3D(a=x_old_n, b=np.add(x, -n)))
             line_ptr.Attributes().SetLayer(f'Normalkraft N')
             if data[i][4] <= 0:
                 line_ptr.Attributes().SetColor(f'#ff0000')
             else:
-                line_ptr.Attributes().SetColor(f'#0000ff')
-            x_old_n = np.add(x, n)
+                line_ptr.Attributes().SetColor(f'#ff0000')
+            x_old_n = np.add(x, -n)
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, m2)))
             line_ptr.Attributes().SetLayer(f'Moment My')
             if data[i][6] <= 0:
-                line_ptr.Attributes().SetColor(f'#ff0000')
+                line_ptr.Attributes().SetColor(f'#05293')
             else:
-                line_ptr.Attributes().SetColor(f'#0000ff')
+                line_ptr.Attributes().SetColor(f'#05293')
 
             line_ptr = geometry.Add(an.Line3D(a=x_old_m2, b=np.add(x, m2)))
             line_ptr.Attributes().SetLayer(f'Moment My')
             if data[i][6] <= 0:
                 line_ptr.Attributes().SetColor(f'#ff0000')
             else:
-                line_ptr.Attributes().SetColor(f'#0000ff')
+                line_ptr.Attributes().SetColor(f'#ff0000')
             x_old_m2 = np.add(x, m2)
 
             line_ptr = geometry.Add(an.Line3D(a=x, b=np.add(x, m3)))
@@ -961,49 +1033,60 @@ class Beam:
     def write_displacement(self, nstep=0):
         act_curve_geometry = self.curve_geometry.Clone()
 
-        stream = open('displacements.txt', 'a')
-        stream.write('#\n' + '# Kratos Output Displacements \n#')
-        stream.write('\n# ' + str(self.curve_geometry_ptr.Key()))
-        stream.write(f'\n# solution step :: {nstep} \n')
-        stream.write('{:>4s}'.format('# Id')+
-                     '{:>30s}'.format('Init x:')+
-                     '{:>30s}'.format('Init y:')+
-                     '{:>30s}'.format('Init z:')+
-                     '{:>30s}'.format('Init rotartion:')+
-                     '{:>30s}'.format('Disp x')+
-                     '{:>30s}'.format('Disp y')+
-                     '{:>30s}'.format('Disp z')+
-                     '{:>30s}'.format('Disp rotation')+
-                     '\n'
-                    )
-
-        for i in range(245):
-            stream.write('*')
-        stream.write('\n#\n')
-        stream.write('#\n')
-
-        for k, pole in enumerate(act_curve_geometry.Poles()):
-            node = self.nodes[k]
-
-            stream.write('{:>4d}'.format(k+1)+
-                        '{:>30f}'.format(node.X0)+
-                        '{:>30f}'.format(node.Y0)+
-                        '{:>30f}'.format(node.Z0)+
-                        '{:>30f}'.format(node.GetValue(DISPLACEMENT_ROTATION))+
-                        '{:>30f}'.format(node.X - node.X0)+
-                        '{:>30f}'.format(node.Y - node.Y0)+
-                        '{:>30f}'.format(node.Z - node.Z0)+
-                        '{:>30f}'.format(node.GetSolutionStepValue(DISPLACEMENT_ROTATION))+
-                        '\n'
+        with open('displacements.txt', 'a') as stream:
+            print('# Kratos Output Displacements \n#', file=stream)
+            print('# ' + str(self.curve_geometry_ptr.Key()), file=stream)
+            print(f'# solution step :: {nstep}', file=stream)
+            print('{:>4s}'.format('# Id')+
+                        '{:>31s}'.format('Init x:')+
+                        '{:>31s}'.format('Init y:')+
+                        '{:>31s}'.format('Init z:')+
+                        '{:>31s}'.format('Init rotartion:')+
+                        '{:>31s}'.format('Disp x')+
+                        '{:>31s}'.format('Disp y')+
+                        '{:>31s}'.format('Disp z')+
+                        '{:>31s}'.format('Disp rotation')
+                        , file=stream
                         )
+
+            print('#', end='', file=stream)
+            for i in range(251):
+                print('*', end='', file=stream)
+            print('#', file=stream)
+
+            for k, pole in enumerate(act_curve_geometry.Poles()):
+                node = self.nodes[k]
+
+                print(f'{k+1:>4d}',
+                    f'{node.X0:>30}',
+                    f'{node.Y0:>30}',
+                    f'{node.Z0:>30}',
+                    f'{node.GetValue(DISPLACEMENT_ROTATION):>30}',
+                    f'{node.X - node.X0:>30}',
+                    f'{node.Y - node.Y0:>30}',
+                    f'{node.Z - node.Z0:>30}',
+                    f'{node.GetSolutionStepValue(DISPLACEMENT_ROTATION):>30}', file=stream
+                    # '\n'
+                    )
 
         stream.close()
 
-    def clear_memory(self):
-        open('results.txt', 'w').close()
-        open('kratos_data.txt', 'w').close()
-        open('frames.txt', 'w').close()
-        open('displacements.txt', 'w')
+        # # benchmark output 
+        # with open('benchmark_m3.txt', 'r+') as m3:
+        #     data_m3 = m3.read()
+
+        # with open('benchmark_mt.txt', 'r+') as mt:
+        #     data_mt = mt.read()
+
+        # node = self.nodes[-1]
+        # with open('benchmark.txt', 'a') as bm:
+        #     print(f'{k+1:>4d}',
+        #           f'{node.Z - node.Z0:>30}',
+        #           f'{node.GetSolutionStepValue(DISPLACEMENT_ROTATION):>30}',
+        #           f'{data_m3:>30}',
+        #           f'{data_mt:>30}',
+        #           file=bm )
+
 
     def make_header(self, nstep=0):
         header = open('kratos_data.txt', 'a')
@@ -1026,7 +1109,7 @@ class Beam:
                      '{:>21s}'.format('y')+
                      '{:>21s}'.format('z')+
                      '{:>30s}'.format('lokal frame V:')+
-                     '{:>10s}'.format('x')+  
+                     '{:>10s}'.format('x')+
                      '{:>21s}'.format('y')+
                      '{:>21s}'.format('z')
                     )
@@ -1056,7 +1139,7 @@ class Beam:
                      '{:>21s}'.format('y')+
                      '{:>21s}'.format('z')+
                      '{:>20s}'.format('lokal frame V:')+
-                     '{:>10s}'.format('x')+  
+                     '{:>10s}'.format('x')+
                      '{:>21s}'.format('y')+
                      '{:>21s}'.format('z')
                     )
@@ -1068,43 +1151,84 @@ class Beam:
 
         header.close()
 
+        with open('kratos_postprocess.txt', 'r+') as kratos_data:
+            content = kratos_data.read()
+
+        p_stream = open('kratos_postprocess.txt', 'w')
+        p_stream.write('#\n' + '# Kratos Point Evaluation \n#')
+        p_stream.write(f'\n# solution step :: {nstep} \n')
+        p_stream.write('{:>4s}'.format('# Id')+
+                     '{:>30s}'.format('Normal Force:')+
+                     '{:>30s}'.format('Moment My:')+
+                     '{:>30s}'.format('Moment Mz:')+
+                     '{:>30s}'.format('Moment Mt:')+
+                     '{:>30s}'.format('Rotation 2:')+
+                     '{:>30s}'.format('Rotation 3:')+
+                     '{:>20s}'.format('local frame T:')+
+                     '{:>21s}'.format('x')+
+                     '{:>21s}'.format('y')+
+                     '{:>21s}'.format('z')+
+                     '{:>20s}'.format('lokal frame N:')+
+                     '{:>21s}'.format('x')+
+                     '{:>21s}'.format('y')+
+                     '{:>21s}'.format('z')+
+                     '{:>20s}'.format('lokal frame V:')+
+                     '{:>21s}'.format('x')+
+                     '{:>21s}'.format('y')+
+                     '{:>21s}'.format('z')
+                    )
+        p_stream.write('\n#')
+
+        for i in range(304):
+            p_stream.write('*')
+        p_stream.write('\n#\n')
+
+        p_stream.write(content)
+
+        p_stream.close()
+
     def write_results(self, nstep=0):
         fname = 'kratos_data.txt'
-        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 'Mt', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'), 
+        data = np.loadtxt(fname, dtype={'names': ('Id', 'x', 'y', 'z', 'N', 'M2', 'M3', 'Mt', 't_0', 't_1', 't_2', 'a2_0', 'a2_1', 'a2_2', 'a3_0', 'a3_1', 'a3_2'),
                                         'formats': ('i4', 'f4', 'f4' , 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')}
                                , skiprows=0)
 
 
         self.make_header_results(nstep)
 
-        stream = open('results.txt', 'a')
+        with open('results.txt', 'a') as stream:
 
-        i = len(data) -1
-        while data[i][0] >= 0:
-            stream.write('{:>4d}'.format(data['Id'][i])+
-                        '{:>20f}'.format(data['N'][i])+
-                        '{:>20f}'.format(data['M2'][i])+
-                        '{:>20f}'.format(data['M3'][i])+
-                        '{:>20f}'.format(data['Mt'][i])+
-                        '{:>30f}'.format(data['t_0'][i])+
-                        '{:>21f}'.format(data['t_1'][i])+
-                        '{:>21f}'.format(data['t_2'][i])+
-                        '{:>30f}'.format(data['a2_0'][i])+
-                        '{:>21f}'.format(data['a2_1'][i])+
-                        '{:>21f}'.format(data['a2_2'][i])+
-                        '{:>30f}'.format(data['a3_0'][i])+  
-                        '{:>21f}'.format(data['a3_0'][i])+
-                        '{:>21f}'.format(data['a3_0'][i])+
-                        '\n'
+            i = len(data) -1
+            while data[i][0] >= 0:
+                print(f"{data['Id'][i]:>4d}",
+                        f"{data['N'][i]:>20f}",
+                        f"{data['M2'][i]:>20f}",
+                        f"{data['M3'][i]:>20f}",
+                        f"{data['Mt'][i]:>20f}",
+                        f"{data['t_0'][i]:>30f}",
+                        f"{data['t_1'][i]:>21f}",
+                        f"{data['t_2'][i]:>21f}",
+                        f"{data['a2_0'][i]:>30f}",
+                        f"{data['a2_1'][i]:>21f}",
+                        f"{data['a2_2'][i]:>21f}",
+                        f"{data['a3_0'][i]:>30f}",
+                        f"{data['a3_0'][i]:>21f}",
+                        f"{data['a3_0'][i]:>21f}",
+                        file=stream
                         )
 
-            if data[i][0] == 1:
-                break
+                if data[i][0] == 1:
+                    break
 
-            i -= 1
+                i -= 1
 
-        stream.close()
+            # stream.close()
+
+    def clear_memory(self):
+        open('results.txt', 'w').close()
+        open('kratos_data.txt', 'w').close()
+        open('frames.txt', 'w').close()
+        open('displacements.txt', 'w')
+        open('kratos_postprocess.txt', 'w')
 
 
-
- 

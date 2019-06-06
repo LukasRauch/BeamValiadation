@@ -1,0 +1,16 @@
+[
+  {
+    "Key": "curve_a.CurveGeometry3D",
+    "Type": "CurveGeometry3D",
+    "Degree": 2,
+    "Knots": [-2.0,-2.0,-1.0,0.0,0.0],
+    "NbPoles": 4,
+    "Poles": [[5.0,0.0,5.0],[2.9341039765860484,0.0,4.9778570597301162],[0.022142947298787297,0.0,2.0658960535082596],[0.0,0.0,0.0]]
+  },
+  {
+    "Key": "curve_a",
+    "Type": "Curve3D",
+    "Geometry": "curve_a.CurveGeometry3D",
+    "Domain": [-2.0,0.0]
+  }
+]
